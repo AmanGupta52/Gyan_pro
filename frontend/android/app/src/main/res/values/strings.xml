@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GYAN-26</string>
+    <string name="title_activity_main">GYAN-26</string>
+    <string name="package_name">com.gyan26.app</string>
+    <string name="custom_url_scheme">com.gyan26.app</string>
+</resources>
