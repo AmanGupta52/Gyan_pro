@@ -42,7 +42,7 @@ export function VerifyCertificatePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="app-bg flex flex-col items-center justify-center p-4">
         <div className="w-12 h-12 border-4 border-brand-blue border-t-transparent rounded-full animate-spin mb-4" />
         <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">
           Querying official GYAN-26 credential registry...
@@ -52,7 +52,7 @@ export function VerifyCertificatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+    <div className="app-bg flex flex-col justify-between p-4 sm:p-6 lg:p-8">
       {/* Top Navbar Header */}
       <header className="max-w-4xl w-full mx-auto flex items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800">
         <Link to="/" className="flex items-center gap-2.5">
@@ -63,7 +63,7 @@ export function VerifyCertificatePage() {
             <span className="text-lg font-bold font-display text-slate-900 dark:text-white">
               GYAN<span className="text-brand-blue">-26</span>
             </span>
-            <p className="text-[10px] text-slate-400 font-medium">
+            <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">
               National Talent Olympiad Verification Portal
             </p>
           </div>
@@ -77,7 +77,7 @@ export function VerifyCertificatePage() {
       {/* Main Verification Body */}
       <main className="max-w-2xl w-full mx-auto my-8 space-y-6">
         {error ? (
-          <Card className="p-8 text-center bg-white dark:bg-slate-900 border-rose-200 dark:border-rose-900/50 rounded-3xl shadow-sm space-y-4">
+          <Card className="p-8 text-center glass border-rose-200 dark:border-rose-900/50 rounded-3xl shadow-sm space-y-4">
             <div className="w-16 h-16 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center mx-auto">
               <XCircle className="w-8 h-8" />
             </div>
@@ -91,7 +91,7 @@ export function VerifyCertificatePage() {
               </p>
             </div>
 
-            <p className="text-xs font-mono text-slate-400">
+            <p className="text-xs font-mono text-slate-600 dark:text-slate-400">
               Query Identifier: {certificateId}
             </p>
 
@@ -104,7 +104,7 @@ export function VerifyCertificatePage() {
             </div>
           </Card>
         ) : cert ? (
-          <Card className="p-6 sm:p-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md space-y-6 relative overflow-hidden">
+          <Card className="p-6 sm:p-10 glass rounded-3xl shadow-md space-y-6 relative overflow-hidden">
             {/* Seal of Authenticity Banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
@@ -120,14 +120,14 @@ export function VerifyCertificatePage() {
                       Official Record
                     </Badge>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5 font-mono">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 font-mono">
                     ID: {cert.certificateId}
                   </p>
                 </div>
               </div>
 
               <div className="text-left sm:text-right">
-                <span className="text-[10px] uppercase font-bold text-slate-400">
+                <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400">
                   Conferral Date (IST)
                 </span>
                 <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
@@ -144,7 +144,7 @@ export function VerifyCertificatePage() {
             {/* Recipient Details */}
             <div className="space-y-4">
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400 tracking-wider">
                   Candidate Awarded
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-black font-display text-slate-900 dark:text-white mt-0.5">
@@ -154,7 +154,7 @@ export function VerifyCertificatePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800 text-xs">
                 <div>
-                  <span className="text-slate-400 font-medium">Championship</span>
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">Championship</span>
                   <p className="font-bold text-slate-900 dark:text-white mt-0.5">
                     {cert.competitionName}
                   </p>
@@ -162,7 +162,7 @@ export function VerifyCertificatePage() {
                 </div>
 
                 <div>
-                  <span className="text-slate-400 font-medium">Squad Representation</span>
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">Squad Representation</span>
                   <p className="font-bold text-slate-900 dark:text-white mt-0.5">
                     {cert.teamName}
                   </p>
@@ -215,7 +215,7 @@ export function VerifyCertificatePage() {
                 Download Official PDF
               </Button>
 
-              <p className="text-[11px] text-slate-400 text-center sm:text-right">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 text-center sm:text-right">
                 Cryptographically hashed • DPDP Act Compliant
               </p>
             </div>
@@ -224,7 +224,7 @@ export function VerifyCertificatePage() {
       </main>
 
       {/* Footer */}
-      <footer className="max-w-4xl w-full mx-auto text-center text-xs text-slate-400 pt-6 border-t border-slate-200 dark:border-slate-800">
+      <footer className="max-w-4xl w-full mx-auto text-center text-xs text-slate-600 dark:text-slate-400 pt-6 border-t border-slate-200 dark:border-slate-800">
         © 2026 GYAN-26 • National Talent Olympiad • All Rights Reserved.
       </footer>
     </div>

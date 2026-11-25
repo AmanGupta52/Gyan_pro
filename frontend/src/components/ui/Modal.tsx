@@ -66,8 +66,7 @@ export function Modal({
               <motion.div
                 className={cn(
                   'fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-lg',
-                  'rounded-card bg-white p-6 shadow-lifted',
-                  'dark:bg-navy-900 dark:border dark:border-slate-200/10',
+                  'glass-nav rounded-3xl p-6 shadow-lifted',
                   'focus:outline-none',
                   className
                 )}

@@ -12,6 +12,12 @@ const config: Config = {
         },
         brand: {
           blue: 'rgb(var(--color-brand-blue) / <alpha-value>)',
+          gold: 'rgb(var(--color-brand-gold) / <alpha-value>)',
+        },
+        electric: {
+          400: '#5B9DFF',
+          500: '#2F7BFF',
+          600: '#1D5FE8',
         },
         blue: {
           500: 'rgb(var(--color-blue-500) / <alpha-value>)',
@@ -72,6 +78,19 @@ const config: Config = {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-12px)' },
         },
+        pop: {
+          '0%': { transform: 'scale(0.85)', opacity: '0' },
+          '60%': { transform: 'scale(1.05)', opacity: '1' },
+          '100%': { transform: 'scale(1)' },
+        },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-4deg)' },
+          '50%': { transform: 'rotate(4deg)' },
+        },
+        flame: {
+          '0%, 100%': { transform: 'scale(1) rotate(-2deg)' },
+          '50%': { transform: 'scale(1.1) rotate(2deg)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.4s ease-out',
@@ -79,6 +98,9 @@ const config: Config = {
         'slide-down': 'slide-down 0.5s ease-out',
         'pulse-gentle': 'pulse-gentle 2s ease-in-out infinite',
         float: 'float 6s ease-in-out infinite',
+        pop: 'pop 0.4s ease-out both',
+        wiggle: 'wiggle 2.4s ease-in-out infinite',
+        flame: 'flame 1.6s ease-in-out infinite',
       },
     },
   },

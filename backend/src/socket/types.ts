@@ -44,6 +44,7 @@ export interface ServerToClientEvents {
 
   /** Session superseded if opened in another window/device */
   'session:superseded': (data: { message: string }) => void;
+  'game:player-reconnected': (data: { sessionId: string; userId: string }) => void;
 
   // ── GAME MULTIPLAYER EVENTS ──────────────────────────────
   'game:joined': (data: {
@@ -76,6 +77,8 @@ export interface ServerToClientEvents {
     question: GameQuestionClientPayload;
     deadline: string; // ISO String
     serverTime: number; // Unix ms
+    /** true when this player already locked an answer (reconnect case) */
+    alreadyAnswered?: boolean;
   }) => void;
 
   'game:timer': (data: {

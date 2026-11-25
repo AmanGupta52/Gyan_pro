@@ -4,7 +4,8 @@ import { z } from 'zod';
  * Zod schema for environment variable validation.
  * Fails fast at startup with clear error messages if any required vars are missing.
  */
-const envSchema = z.object({
+const envSchema = z
+  .object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().int().positive().default(5000),
 
@@ -30,14 +31,35 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string().min(1, 'CLOUDINARY_API_KEY is required'),
   CLOUDINARY_API_SECRET: z.string().min(1, 'CLOUDINARY_API_SECRET is required'),
 
-  // Email
-  EMAIL_PROVIDER_KEY: z.string().optional(),
-  EMAIL_FROM: z.string().email().default('noreply@gyan26.com'),
+  // Email (EmailJS REST API — https://www.emailjs.com/docs/rest-api/send/)
+  // Optional in dev/test (emails are logged instead of sent); required in production.
+  EMAILJS_SERVICE_ID: z.string().optional(),
+  EMAILJS_TEMPLATE_ID: z.string().optional(),
+  EMAILJS_PUBLIC_KEY: z.string().optional(),
+  EMAILJS_PRIVATE_KEY: z.string().optional(),
+  EMAIL_FROM_NAME: z.string().default('GYAN-26'),
 
   // Seed
   SEED_ADMIN_EMAIL: z.string().email().optional(),
   SEED_ADMIN_PASSWORD: z.string().optional(),
-});
+  })
+  .superRefine((cfg, ctx) => {
+    if (cfg.NODE_ENV !== 'production') return;
+    for (const key of [
+      'EMAILJS_SERVICE_ID',
+      'EMAILJS_TEMPLATE_ID',
+      'EMAILJS_PUBLIC_KEY',
+      'EMAILJS_PRIVATE_KEY',
+    ] as const) {
+      if (!cfg[key]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key],
+          message: `${key} is required in production (EmailJS)`,
+        });
+      }
+    }
+  });
 
 export type Env = z.infer<typeof envSchema>;
 

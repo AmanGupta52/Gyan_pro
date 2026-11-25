@@ -41,7 +41,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   /* ── Refresh session on mount ────────────── */
 
-  const refreshUser = useCallback(async () => {
+  // Refresh tokens rotate on every use. React 18 StrictMode runs effects twice in dev,
+  // which would fire two refreshes with the same token and trip reuse-detection (logging
+  // the user out). Share a single in-flight request instead.
+  const refreshInFlight = useRef<Promise<void> | null>(null);
+
+  const refreshUser = useCallback((): Promise<void> => {
+    if (refreshInFlight.current) return refreshInFlight.current;
+    const run = (async () => {
     try {
       const storedRefreshToken = await getStoredRefreshToken();
       const payload = storedRefreshToken ? { refreshToken: storedRefreshToken } : {};
@@ -66,6 +73,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(null);
       disconnectSocket();
     }
+    })().finally(() => {
+      refreshInFlight.current = null;
+    });
+    refreshInFlight.current = run;
+    return run;
   }, [storeToken]);
 
   useEffect(() => {

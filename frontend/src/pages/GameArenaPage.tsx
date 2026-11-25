@@ -149,29 +149,29 @@ export function GameArenaPage() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Card className="p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-2xl">
-            <p className="text-[10px] uppercase font-bold text-slate-400">Squad Score</p>
+          <Card className="p-4 glass border-slate-200 dark:border-slate-800 rounded-2xl">
+            <p className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400">Squad Score</p>
             <p className="text-2xl font-black font-display text-brand-blue mt-1">
               {finishedData.totalScore}
             </p>
           </Card>
 
-          <Card className="p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-2xl">
-            <p className="text-[10px] uppercase font-bold text-slate-400">Accuracy</p>
+          <Card className="p-4 glass border-slate-200 dark:border-slate-800 rounded-2xl">
+            <p className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400">Accuracy</p>
             <p className="text-2xl font-black font-display text-emerald-500 mt-1">
               {Math.round(finishedData.accuracy * 100)}%
             </p>
           </Card>
 
-          <Card className="p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-2xl">
-            <p className="text-[10px] uppercase font-bold text-slate-400">Correct Qs</p>
+          <Card className="p-4 glass border-slate-200 dark:border-slate-800 rounded-2xl">
+            <p className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400">Correct Qs</p>
             <p className="text-2xl font-black font-display text-purple-500 mt-1">
               {finishedData.correctCount}
             </p>
           </Card>
 
-          <Card className="p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-2xl">
-            <p className="text-[10px] uppercase font-bold text-slate-400">Total Duration</p>
+          <Card className="p-4 glass border-slate-200 dark:border-slate-800 rounded-2xl">
+            <p className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400">Total Duration</p>
             <p className="text-2xl font-black font-display text-slate-700 dark:text-slate-200 mt-1">
               {finishedData.durationSeconds}s
             </p>
@@ -207,7 +207,7 @@ export function GameArenaPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in-50 duration-200 pb-12">
       {/* ── TOP ARENA BAR: PROGRESS, SCORE, TIMER ───────────────────── */}
-      <div className="flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+      <div className="flex items-center justify-between glass rounded-2xl p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-brand-blue font-bold">
             Q{currentQuestionIndex + 1}
@@ -221,7 +221,7 @@ export function GameArenaPage() {
                 {currentQuestion.points} pts
               </Badge>
             </div>
-            <p className="text-[11px] text-slate-400 capitalize">
+            <p className="text-[11px] text-slate-600 dark:text-slate-400 capitalize">
               {currentQuestion.type.replace('_', ' ')}
             </p>
           </div>
@@ -229,7 +229,7 @@ export function GameArenaPage() {
 
         <div className="flex items-center gap-4">
           <div className="hidden sm:block text-right">
-            <span className="text-[10px] uppercase font-bold text-slate-400">Squad Score</span>
+            <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400">Squad Score</span>
             <p className="text-lg font-black font-display text-brand-blue">{teamScore}</p>
           </div>
 
@@ -243,7 +243,7 @@ export function GameArenaPage() {
       </div>
 
       {/* ── QUESTION CARD ───────────────────────────────────────────── */}
-      <Card className="p-6 sm:p-8 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm space-y-6">
+      <Card className="p-6 sm:p-8 glass border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm space-y-6">
         {/* Optional Question Image */}
         {currentQuestion.image && (
           <div className="rounded-2xl overflow-hidden max-h-72 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
@@ -309,7 +309,7 @@ export function GameArenaPage() {
                   {opt.text}
                 </span>
 
-                <span className="text-[10px] font-mono text-slate-400 opacity-60">
+                <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400 opacity-60">
                   [{idx + 1}]
                 </span>
 
@@ -327,7 +327,7 @@ export function GameArenaPage() {
         {/* Lock Answer Action Bar */}
         {!isClosed && (
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100 dark:border-slate-800">
-            <div className="text-xs text-slate-400">
+            <div className="text-xs text-slate-600 dark:text-slate-400">
               {isAnswerLocked ? (
                 <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">
                   <CheckCircle className="w-4 h-4" />
@@ -374,7 +374,7 @@ export function GameArenaPage() {
                 ) : null}
               </div>
 
-              <span className="text-xs font-semibold text-slate-400">
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                 Next question preparing...
               </span>
             </div>

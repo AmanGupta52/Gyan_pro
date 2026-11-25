@@ -205,7 +205,12 @@ FRONTEND_URL=http://localhost:5173
 CLOUDINARY_CLOUD_NAME=gyan26
 CLOUDINARY_API_KEY=sample_api_key
 CLOUDINARY_API_SECRET=sample_api_secret
-EMAIL_FROM=noreply@gyan26.org
+# EmailJS — optional in development (emails are logged to the console), required in production
+EMAILJS_SERVICE_ID=service_xxxxxxx
+EMAILJS_TEMPLATE_ID=template_xxxxxxx
+EMAILJS_PUBLIC_KEY=your-public-key
+EMAILJS_PRIVATE_KEY=your-private-key
+EMAIL_FROM_NAME=GYAN-26
 SEED_ADMIN_EMAIL=admin@gyan26.org
 SEED_ADMIN_PASSWORD=Admin@12345678
 ```
@@ -215,6 +220,23 @@ SEED_ADMIN_PASSWORD=Admin@12345678
 VITE_API_URL=http://localhost:5000/api
 VITE_SOCKET_URL=http://localhost:5000
 ```
+
+### 2b. Email delivery with EmailJS
+
+The backend sends verification and password-reset emails through the **EmailJS REST API**
+(`backend/src/services/email.service.ts`).
+
+1. Create an account at <https://www.emailjs.com> and add an **Email Service** (Gmail, Outlook, ...). Copy the *Service ID*.
+2. Create **one generic template**. Set the **To Email** field to `{{to_email}}`, the **Subject** to `{{subject}}`, and the content to:
+   ```html
+   {{{html_content}}}
+   ```
+   (three braces so the HTML is not escaped). Copy the *Template ID*.
+3. **Account > General**: copy the *Public Key*.
+4. **Account > Security**: enable **"Allow EmailJS API for non-browser applications"** and copy the *Private Key*. Without this option, server-side calls are rejected.
+5. Put the four values into `backend/.env` (and the Render dashboard in production).
+
+Behaviour: in `development`, if EmailJS is not configured, emails are only logged to the console. In `production` the server refuses to start unless all four `EMAILJS_*` values are set. Note that the EmailJS free plan has a small monthly quota.
 
 ### 3. Install Dependencies & Seed Database
 ```bash

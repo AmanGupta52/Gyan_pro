@@ -4,6 +4,7 @@ import {
   getSession,
   startSession,
   advanceToQuestion,
+  getActiveQuestionState,
   submitAnswer,
   closeCurrentQuestion,
   finishSession,
@@ -91,6 +92,10 @@ export function registerGameHandlers(io: CustomServer, socket: CustomSocket) {
 
   // ── 1. game:join ─────────────────────────────────────────────
   socket.on('game:join', async (rawPayload, callback) => {
+    if (!checkSocketRateLimit(socket.id)) {
+      callback?.({ success: false, error: 'Too many requests. Slow down.' });
+      return;
+    }
     try {
       const parsed = joinSchema.safeParse(rawPayload);
       if (!parsed.success) {
@@ -112,12 +117,15 @@ export function registerGameHandlers(io: CustomServer, socket: CustomSocket) {
         await session.save();
       }
 
-      // Notify room
+      // Notify room (reconnect vs. first connect)
       io.to(room).emit('game:player-status', {
         sessionId,
         userId,
         status: 'connected',
       });
+      if (session.status !== 'waiting') {
+        io.to(room).emit('game:player-reconnected', { sessionId, userId });
+      }
 
       // Send join confirmation payload
       socket.emit('game:joined', {
@@ -132,27 +140,29 @@ export function registerGameHandlers(io: CustomServer, socket: CustomSocket) {
         totalQuestions: session.questionIds.length,
       });
 
-      // If already active, restore current question for this player
+      // If a question is running, restore it WITHOUT touching the persisted deadline
+      // (time keeps running while disconnected; reconnecting grants no extra time).
       if (session.status === 'question_active') {
-        const questionData = await advanceToQuestion(sessionId, session.currentQuestionIndex);
-        const deadlineIso = questionData.deadline.toISOString();
-
-        socket.emit('game:question', {
-          sessionId,
-          questionIndex: session.currentQuestionIndex,
-          totalQuestions: session.questionIds.length,
-          question: {
-            _id: questionData.question._id.toString(),
-            text: questionData.question.text,
-            type: questionData.question.type,
-            options: questionData.question.options,
-            points: questionData.question.points,
-            timeLimit: questionData.timeLimit,
-            image: questionData.question.image,
-          },
-          deadline: deadlineIso,
-          serverTime: Date.now(),
-        });
+        const active = await getActiveQuestionState(sessionId, userId);
+        if (active) {
+          socket.emit('game:question', {
+            sessionId,
+            questionIndex: active.questionIndex,
+            totalQuestions: active.totalQuestions,
+            question: {
+              _id: active.question._id.toString(),
+              text: active.question.text,
+              type: active.question.type,
+              options: active.question.options,
+              points: active.question.points,
+              timeLimit: active.timeLimit,
+              image: active.question.image,
+            },
+            deadline: active.deadline.toISOString(),
+            serverTime: Date.now(),
+            alreadyAnswered: active.alreadyAnswered,
+          });
+        }
       }
 
       callback?.({ success: true });
@@ -164,6 +174,10 @@ export function registerGameHandlers(io: CustomServer, socket: CustomSocket) {
 
   // ── 2. game:ready ────────────────────────────────────────────
   socket.on('game:ready', async (rawPayload, callback) => {
+    if (!checkSocketRateLimit(socket.id)) {
+      callback?.({ success: false, error: 'Too many requests. Slow down.' });
+      return;
+    }
     try {
       const parsed = readySchema.safeParse(rawPayload);
       if (!parsed.success) {
@@ -206,6 +220,10 @@ export function registerGameHandlers(io: CustomServer, socket: CustomSocket) {
 
   // ── 3. game:start ────────────────────────────────────────────
   socket.on('game:start', async (rawPayload, callback) => {
+    if (!checkSocketRateLimit(socket.id)) {
+      callback?.({ success: false, error: 'Too many requests. Slow down.' });
+      return;
+    }
     try {
       const parsed = startSchema.safeParse(rawPayload);
       if (!parsed.success) {
@@ -241,6 +259,10 @@ export function registerGameHandlers(io: CustomServer, socket: CustomSocket) {
 
   // ── 4. game:answer ───────────────────────────────────────────
   socket.on('game:answer', async (rawPayload, callback) => {
+    if (!checkSocketRateLimit(socket.id)) {
+      callback?.({ success: false, error: 'Too many requests. Slow down.' });
+      return;
+    }
     try {
       const parsed = answerSchema.safeParse(rawPayload);
       if (!parsed.success) {
@@ -282,6 +304,9 @@ export function registerGameHandlers(io: CustomServer, socket: CustomSocket) {
   // ── 5. disconnect ────────────────────────────────────────────
   socket.on('disconnect', async () => {
     socketRateMap.delete(socket.id);
+    // A superseded socket must not clear the registration (or the "connected" status)
+    // of the newer socket that replaced it.
+    if (userSocketMap.get(userId) !== socket.id) return;
     userSocketMap.delete(userId);
     const sessionId = socket.data.gameSessionId;
 

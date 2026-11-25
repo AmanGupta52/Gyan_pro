@@ -12,19 +12,19 @@ import { cn } from '@/lib/utils';
 
 const variantStyles = {
   primary:
-    'bg-brand-blue text-white hover:bg-blue-500 active:scale-[0.97] focus-visible:ring-brand-blue/40',
+    'btn-3d bg-gradient-to-b from-electric-400 to-electric-600 text-white focus-visible:ring-electric-500/50',
   secondary:
-    'border-2 border-brand-blue text-brand-blue bg-transparent hover:bg-brand-blue/10 active:scale-[0.97] focus-visible:ring-brand-blue/40',
+    'border-2 border-electric-500/70 text-electric-600 dark:text-sky-200 bg-white/40 dark:bg-white/5 backdrop-blur hover:bg-electric-500/10 active:scale-[0.97] focus-visible:ring-electric-500/40',
   ghost:
-    'bg-transparent text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-navy-700/60 active:scale-[0.97]',
+    'bg-transparent text-slate-700 dark:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/10 active:scale-[0.97]',
   danger:
-    'bg-rose-500 text-white hover:bg-rose-500/90 active:scale-[0.97] focus-visible:ring-rose-500/40',
+    'bg-rose-500 text-white hover:bg-rose-600 active:scale-[0.97] focus-visible:ring-rose-500/40',
 } as const;
 
 const sizeStyles = {
-  sm: 'h-8 px-3 text-sm gap-1.5 rounded-lg',
-  md: 'h-10 px-5 text-sm gap-2 rounded-input',
-  lg: 'h-12 px-6 text-base gap-2.5 rounded-input',
+  sm: 'h-9 px-3.5 text-sm gap-1.5 rounded-xl',
+  md: 'h-11 px-5 text-sm gap-2 rounded-2xl',
+  lg: 'h-12 px-6 text-base gap-2.5 rounded-2xl',
 } as const;
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

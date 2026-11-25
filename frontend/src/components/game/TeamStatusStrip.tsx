@@ -11,10 +11,10 @@ export function TeamStatusStrip({ members, currentUserId }: TeamStatusStripProps
   return (
     <div className="w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-sm">
       <div className="flex items-center justify-between mb-2 px-1">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
           Squad Real-Time Status ({members.length})
         </span>
-        <span className="text-[10px] text-slate-400 font-medium">
+        <span className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">
           Authoritative Sync Active
         </span>
       </div>
@@ -91,7 +91,7 @@ export function TeamStatusStrip({ members, currentUserId }: TeamStatusStripProps
                     </span>
                   )}
                   {member.status === 'connected' && (
-                    <span className="text-[10px] font-medium text-slate-400">
+                    <span className="text-[10px] font-medium text-slate-600 dark:text-slate-400">
                       Connected
                     </span>
                   )}

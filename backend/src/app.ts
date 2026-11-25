@@ -12,6 +12,10 @@ import { AppError } from './utils/AppError.js';
 export function createApp(): Express {
   const app = express();
 
+  // Render/Vercel/Netlify sit behind a reverse proxy: needed for correct client IPs
+  // (rate limiting) and for Secure cookies.
+  app.set('trust proxy', 1);
+
   // 1. Security headers
   app.use(helmet());
 
@@ -23,7 +27,7 @@ export function createApp(): Express {
         if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
           callback(null, true);
         } else {
-          callback(new Error(`Origin ${origin} not allowed by CORS`));
+          callback(AppError.forbidden(`Origin ${origin} not allowed by CORS`));
         }
       },
       credentials: true,

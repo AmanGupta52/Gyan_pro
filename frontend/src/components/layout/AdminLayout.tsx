@@ -28,7 +28,7 @@ export function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen flex bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
+    <div className="app-bg flex">
       {/* ── DESKTOP SIDEBAR ────────────────────────────────────── */}
       <aside className="hidden lg:flex flex-col w-64 bg-white dark:bg-navy-900 border-r border-slate-200 dark:border-slate-800 p-5 justify-between">
         <div className="space-y-6">
@@ -46,7 +46,7 @@ export function AdminLayout() {
                   Admin
                 </Badge>
               </div>
-              <p className="text-[10px] text-slate-400 font-medium">Control Center</p>
+              <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">Control Center</p>
             </div>
           </div>
 
@@ -85,7 +85,7 @@ export function AdminLayout() {
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">
               <ShieldCheck className="w-3.5 h-3.5 text-brand-blue" />
-              <span className="text-[11px] text-slate-400 capitalize">
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 capitalize">
                 {user?.role} Access
               </span>
             </div>

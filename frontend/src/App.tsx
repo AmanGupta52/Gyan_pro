@@ -5,6 +5,8 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { AuthPage } from '@/pages/AuthPage';
+import { VerifyEmailPage } from '@/pages/VerifyEmailPage';
+import { ResetPasswordPage } from '@/pages/ResetPasswordPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { CompetitionsPage } from '@/pages/CompetitionsPage';
 import { CompetitionDetailPage } from '@/pages/CompetitionDetailPage';
@@ -19,6 +21,7 @@ import { MatchHistoryPage } from '@/pages/MatchHistoryPage';
 import { VerifyCertificatePage } from '@/pages/VerifyCertificatePage';
 import { CertificatesPage } from '@/pages/CertificatesPage';
 import { SupportPage } from '@/pages/SupportPage';
+import { InstructionsPage } from '@/pages/InstructionsPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
@@ -47,6 +50,8 @@ export function App() {
             {/* Public routes */}
             <Route path="/" element={<Navigate to="/auth" replace />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/verify-certificate/:certificateId" element={<VerifyCertificatePage />} />
 
             {/* Protected routes wrapped in AppLayout */}
@@ -76,8 +81,7 @@ export function App() {
                 <Route path="/support" element={<SupportPage />} />
                 <Route path="/donate" element={<Navigate to="/support" replace />} />
 
-                {/* Stubs for future phases */}
-                <Route path="/instructions" element={<DashboardPage />} />
+                <Route path="/instructions" element={<InstructionsPage />} />
               </Route>
             </Route>
 

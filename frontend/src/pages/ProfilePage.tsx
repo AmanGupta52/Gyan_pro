@@ -92,7 +92,7 @@ export function ProfilePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left card: Avatar & Role Summary */}
-        <Card className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm flex flex-col items-center text-center">
+        <Card className="p-6 glass rounded-3xl shadow-sm flex flex-col items-center text-center">
           <div className="relative group">
             <Avatar name={user?.name || ''} src={user?.photo} size="xl" className="w-24 h-24 text-2xl" />
             <button
@@ -153,7 +153,7 @@ export function ProfilePage() {
         </Card>
 
         {/* Right card: Profile Edit Form */}
-        <Card className="md:col-span-2 p-6 sm:p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm">
+        <Card className="md:col-span-2 p-6 sm:p-8 glass rounded-3xl shadow-sm">
           <form onSubmit={handleSubmit(onUpdateProfile)} className="space-y-4">
             <h3 className="text-base font-bold text-slate-900 dark:text-white">
               Personal Information

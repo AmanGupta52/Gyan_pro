@@ -6,7 +6,7 @@ export function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 text-center">
+    <div className="app-bg flex flex-col items-center justify-center p-4 text-center">
       <div className="w-16 h-16 rounded-3xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-500 flex items-center justify-center mb-6">
         <AlertTriangle className="w-8 h-8" />
       </div>

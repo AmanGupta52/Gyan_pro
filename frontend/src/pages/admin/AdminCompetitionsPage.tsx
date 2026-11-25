@@ -198,13 +198,13 @@ export function AdminCompetitionsPage() {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-slate-400">
+              <TableCell colSpan={6} className="text-center py-8 text-slate-600 dark:text-slate-400">
                 Loading competitions...
               </TableCell>
             </TableRow>
           ) : competitions.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-slate-400">
+              <TableCell colSpan={6} className="text-center py-8 text-slate-600 dark:text-slate-400">
                 No competitions found. Create one above!
               </TableCell>
             </TableRow>
@@ -416,7 +416,7 @@ export function AdminCompetitionsPage() {
           <div className="space-y-4 pt-2">
             <div className="max-h-80 overflow-y-auto space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
               {availableQuestions.length === 0 ? (
-                <p className="py-6 text-center text-xs text-slate-400">
+                <p className="py-6 text-center text-xs text-slate-600 dark:text-slate-400">
                   No questions found in question bank for {assignComp.category}. Please add questions to the bank first.
                 </p>
               ) : (
@@ -434,7 +434,7 @@ export function AdminCompetitionsPage() {
                     >
                       <div className="flex-1 truncate">
                         <p className="text-xs font-semibold truncate">{q.text}</p>
-                        <span className="text-[10px] text-slate-400 capitalize">
+                        <span className="text-[10px] text-slate-600 dark:text-slate-400 capitalize">
                           {q.difficulty}
                         </span>
                       </div>

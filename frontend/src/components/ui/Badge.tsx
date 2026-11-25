@@ -12,13 +12,13 @@ const variantStyles = {
   default:
     'bg-slate-200/60 text-slate-700 dark:bg-slate-200/10 dark:text-slate-200',
   success:
-    'bg-emerald-500/15 text-emerald-500 dark:bg-emerald-500/20',
+    'bg-emerald-500/15 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300',
   warning:
-    'bg-amber-400/15 text-amber-400 dark:bg-amber-400/20',
+    'bg-amber-400/20 text-amber-900 dark:bg-amber-400/20 dark:text-amber-300',
   error:
-    'bg-rose-500/15 text-rose-500 dark:bg-rose-500/20',
+    'bg-rose-500/15 text-rose-800 dark:bg-rose-500/20 dark:text-rose-300',
   info:
-    'bg-brand-blue/15 text-brand-blue dark:bg-brand-blue/20',
+    'bg-brand-blue/15 text-blue-800 dark:bg-brand-blue/25 dark:text-sky-200',
 } as const;
 
 const sizeStyles = {

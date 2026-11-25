@@ -117,7 +117,7 @@ export function ResultScorecardPage() {
       </div>
 
       {/* ── HEADER SCORECARD BANNER ─────────────────────────────────── */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+      <div className="glass rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -161,28 +161,28 @@ export function ResultScorecardPage() {
         {/* 4 Key Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
           <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 text-center">
-            <p className="text-[10px] font-bold uppercase text-slate-400">Total Squad Score</p>
+            <p className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Total Squad Score</p>
             <p className="text-2xl font-black font-display text-brand-blue mt-1">
               {result.totalScore}
             </p>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 text-center">
-            <p className="text-[10px] font-bold uppercase text-slate-400">Squad Accuracy</p>
+            <p className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Squad Accuracy</p>
             <p className="text-2xl font-black font-display text-emerald-500 mt-1">
               {Math.round(result.accuracy * 100)}%
             </p>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 text-center">
-            <p className="text-[10px] font-bold uppercase text-slate-400">Correct Answers</p>
+            <p className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Correct Answers</p>
             <p className="text-2xl font-black font-display text-purple-500 mt-1">
               {result.correctCount}
             </p>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 text-center">
-            <p className="text-[10px] font-bold uppercase text-slate-400">Total Duration</p>
+            <p className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Total Duration</p>
             <p className="text-2xl font-black font-display text-slate-700 dark:text-slate-200 mt-1">
               {result.totalDurationSeconds}s
             </p>
@@ -217,7 +217,7 @@ export function ResultScorecardPage() {
                       <p className="font-semibold text-xs text-slate-900 dark:text-white">
                         {p.name}
                       </p>
-                      <p className="text-[10px] text-slate-400">Player ID: {p.userId.slice(-6)}</p>
+                      <p className="text-[10px] text-slate-600 dark:text-slate-400">Player ID: {p.userId.slice(-6)}</p>
                     </div>
                   </div>
                 </TableCell>
@@ -249,7 +249,7 @@ export function ResultScorecardPage() {
               <HelpCircle className="w-5 h-5 text-purple-500" />
               <span>Question Review & Explanations</span>
             </h2>
-            <span className="text-xs text-slate-400 font-medium">
+            <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">
               {questions.length} Questions Evaluated
             </span>
           </div>
@@ -261,7 +261,7 @@ export function ResultScorecardPage() {
               return (
                 <div
                   key={q.questionIndex}
-                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden transition-all shadow-sm"
+                  className="glass rounded-2xl overflow-hidden transition-all shadow-sm"
                 >
                   <button
                     type="button"
@@ -282,9 +282,9 @@ export function ResultScorecardPage() {
                         {q.points} pts
                       </Badge>
                       {isOpen ? (
-                        <ChevronUp className="w-4 h-4 text-slate-400" />
+                        <ChevronUp className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-slate-400" />
+                        <ChevronDown className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                       )}
                     </div>
                   </button>
@@ -302,7 +302,7 @@ export function ResultScorecardPage() {
                               className={`p-3 rounded-xl border flex items-center gap-2.5 ${
                                 isCorrect
                                   ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-900 dark:text-emerald-200 font-semibold'
-                                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300'
+                                  : 'glass border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300'
                               }`}
                             >
                               <span
@@ -345,13 +345,13 @@ export function ResultScorecardPage() {
                             return (
                               <div
                                 key={ans.userId}
-                                className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+                                className="flex items-center justify-between p-2 rounded-lg glass"
                               >
                                 <span className="font-medium text-slate-900 dark:text-white">
                                   {playerObj?.name || 'Player'}
                                 </span>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-mono text-slate-400">
+                                  <span className="font-mono text-slate-600 dark:text-slate-400">
                                     Picked: [{ans.selectedOptions.join(', ')}]
                                   </span>
                                   {ans.isCorrect ? (

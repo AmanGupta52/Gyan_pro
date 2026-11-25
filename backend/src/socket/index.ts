@@ -37,7 +37,7 @@ export function initSocket(httpServer: HTTPServer): SocketIOServer {
     SocketData
   >(httpServer, {
     cors: {
-      origin: env.CORS_ORIGIN,
+      origin: env.CORS_ORIGIN.split(',').map((o) => o.trim()),
       credentials: true,
     },
     pingTimeout: 60_000,
@@ -86,7 +86,9 @@ export function initSocket(httpServer: HTTPServer): SocketIOServer {
 
     // ── Disconnect ───────────────────────────────────────────
     socket.on('disconnect', (reason) => {
-      onlineUsers.delete(userId);
+      if (onlineUsers.get(userId) === socket.id) {
+        onlineUsers.delete(userId);
+      }
       logger.info(
         { userId, socketId: socket.id, reason, totalOnline: onlineUsers.size },
         '🔌 Socket disconnected'

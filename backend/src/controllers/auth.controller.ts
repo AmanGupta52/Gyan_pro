@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import * as authService from '../services/auth.service.js';
 import { env } from '../config/env.js';
+import { AppError } from '../utils/AppError.js';
 
 /** Cookie options for refresh token */
 const REFRESH_COOKIE_NAME = 'refreshToken';
@@ -13,10 +14,13 @@ function getRefreshCookieOptions(): {
   maxAge: number;
   path: string;
 } {
+  // In production the web app (Vercel/Netlify) and the API (Render) live on different
+  // sites, so the refresh cookie must be SameSite=None; Secure to be sent at all.
+  const isProd = env.NODE_ENV === 'production';
   return {
     httpOnly: true,
-    secure: env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/',
   };
@@ -36,6 +40,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     message: 'Registration successful. Please verify your email.',
     data: {
       accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken, // Returned for native mobile secure storage
       user,
     },
   });
@@ -71,17 +76,11 @@ export const refreshToken = asyncHandler(async (req: Request, res: Response) => 
   const token: string | undefined =
     req.cookies?.[REFRESH_COOKIE_NAME] || req.body?.refreshToken;
 
-  if (!token) {
-    res.status(400).json({
-      error: {
-        code: 'BAD_REQUEST',
-        message: 'Refresh token is required',
-      },
-    });
-    return;
+  if (!token || typeof token !== 'string') {
+    throw AppError.unauthorized('Refresh token is required');
   }
 
-  const tokens = await authService.refreshTokens(token);
+  const { tokens, user } = await authService.refreshTokens(token);
 
   res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, getRefreshCookieOptions());
 
@@ -90,6 +89,7 @@ export const refreshToken = asyncHandler(async (req: Request, res: Response) => 
     data: {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken, // For native mobile token rotation
+      user, // Lets the client restore the session after a page reload
     },
   });
 });
@@ -101,7 +101,8 @@ export const refreshToken = asyncHandler(async (req: Request, res: Response) => 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   await authService.logout(req.user!.userId);
 
-  res.clearCookie(REFRESH_COOKIE_NAME, { path: '/' });
+  const { maxAge: _maxAge, ...clearOptions } = getRefreshCookieOptions();
+  res.clearCookie(REFRESH_COOKIE_NAME, clearOptions);
 
   res.status(200).json({
     success: true,

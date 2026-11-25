@@ -179,17 +179,17 @@ export function LeaderboardPage() {
                 <h3 className="font-bold text-base text-slate-900 dark:text-white truncate">
                   {topThree[1].teamId.name}
                 </h3>
-                <p className="text-xs text-slate-400">{topThree[1].teamId.category}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">{topThree[1].teamId.category}</p>
               </div>
               <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-around text-xs">
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Score</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 uppercase font-semibold">Score</p>
                   <p className="font-bold text-slate-900 dark:text-white text-base">
                     {topThree[1].totalScore}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Accuracy</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 uppercase font-semibold">Accuracy</p>
                   <p className="font-bold text-emerald-600 dark:text-emerald-400 text-base">
                     {Math.round(topThree[1].accuracy * 100)}%
                   </p>
@@ -215,13 +215,13 @@ export function LeaderboardPage() {
               </div>
               <div className="pt-2 border-t border-amber-200 dark:border-amber-900 flex justify-around text-xs">
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Squad Score</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 uppercase font-semibold">Squad Score</p>
                   <p className="font-black text-brand-blue text-lg">
                     {topThree[0].totalScore}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Accuracy</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 uppercase font-semibold">Accuracy</p>
                   <p className="font-black text-emerald-600 dark:text-emerald-400 text-lg">
                     {Math.round(topThree[0].accuracy * 100)}%
                   </p>
@@ -240,17 +240,17 @@ export function LeaderboardPage() {
                 <h3 className="font-bold text-base text-slate-900 dark:text-white truncate">
                   {topThree[2].teamId.name}
                 </h3>
-                <p className="text-xs text-slate-400">{topThree[2].teamId.category}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">{topThree[2].teamId.category}</p>
               </div>
               <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-around text-xs">
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Score</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 uppercase font-semibold">Score</p>
                   <p className="font-bold text-slate-900 dark:text-white text-base">
                     {topThree[2].totalScore}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Accuracy</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 uppercase font-semibold">Accuracy</p>
                   <p className="font-bold text-emerald-600 dark:text-emerald-400 text-base">
                     {Math.round(topThree[2].accuracy * 100)}%
                   </p>
@@ -277,13 +277,13 @@ export function LeaderboardPage() {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-10 text-slate-400">
+              <TableCell colSpan={7} className="text-center py-10 text-slate-600 dark:text-slate-400">
                 Loading official leaderboard...
               </TableCell>
             </TableRow>
           ) : leaderboard.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-10 text-slate-400">
+              <TableCell colSpan={7} className="text-center py-10 text-slate-600 dark:text-slate-400">
                 No match results recorded yet for this competition.
               </TableCell>
             </TableRow>
@@ -310,7 +310,7 @@ export function LeaderboardPage() {
                     <p className="font-bold text-sm text-slate-900 dark:text-white">
                       {row.teamId.name}
                     </p>
-                    <p className="text-[10px] text-slate-400">{row.teamId.category}</p>
+                    <p className="text-[10px] text-slate-600 dark:text-slate-400">{row.teamId.category}</p>
                   </div>
                 </TableCell>
                 <TableCell>

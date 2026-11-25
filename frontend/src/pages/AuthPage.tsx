@@ -50,7 +50,7 @@ export function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-slate-50 dark:bg-slate-950">
+    <div className="app-bg w-full flex flex-col lg:flex-row">
       {/* Left Column: Hero Branding */}
       <div className="w-full lg:w-1/2 p-4 lg:p-6 flex flex-col">
         <AuthHero />
@@ -58,7 +58,7 @@ export function AuthPage() {
 
       {/* Right Column: Auth Card */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-12">
-        <Card className="w-full max-w-lg p-6 sm:p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-3xl">
+        <Card className="glass-nav w-full max-w-lg p-6 sm:p-8 rounded-[28px]">
           {isForgotPassword ? (
             <div className="space-y-5 animate-in fade-in-50 duration-200">
               <button

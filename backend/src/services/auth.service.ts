@@ -125,22 +125,24 @@ export async function login(
   password: string
 ): Promise<{ tokens: TokenPair; user: PublicUser }> {
   // Determine whether identifier is email or phone
-  const isEmail = identifier.includes('@');
-  const query = isEmail ? { email: identifier.toLowerCase() } : { phone: identifier };
+  const trimmed = identifier.trim();
+  const isEmail = trimmed.includes('@');
+  const query = isEmail ? { email: trimmed.toLowerCase() } : { phone: trimmed };
 
   const user = await User.findOne(query).select('+password');
   if (!user) {
-    throw AppError.unauthorized('Invalid credentials');
+    throw AppError.unauthorized('Invalid email or password');
+  }
+
+  // Verify password FIRST so that account state is never revealed to someone
+  // who does not know the password.
+  const isMatch = await verifyPassword(user.password, password).catch(() => false);
+  if (!isMatch) {
+    throw AppError.unauthorized('Invalid email or password');
   }
 
   if (!user.isActive) {
     throw AppError.forbidden('Account is deactivated. Contact support.');
-  }
-
-  // Verify password
-  const isMatch = await verifyPassword(user.password, password);
-  if (!isMatch) {
-    throw AppError.unauthorized('Invalid credentials');
   }
 
   // Generate tokens
@@ -160,7 +162,9 @@ export async function login(
  * Refresh the token pair using a valid refresh token.
  * Implements token rotation: old refresh token is replaced.
  */
-export async function refreshTokens(token: string): Promise<TokenPair> {
+export async function refreshTokens(
+  token: string
+): Promise<{ tokens: TokenPair; user: PublicUser }> {
   // Verify the refresh token
   let payload;
   try {
@@ -190,7 +194,7 @@ export async function refreshTokens(token: string): Promise<TokenPair> {
   user.refreshToken = newTokens.refreshToken;
   await user.save();
 
-  return newTokens;
+  return { tokens: newTokens, user: user.toPublicJSON() };
 }
 
 /**

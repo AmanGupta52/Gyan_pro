@@ -151,7 +151,7 @@ export function CompetitionsPage() {
             return (
               <Card
                 key={comp._id}
-                className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+                className="p-6 glass rounded-3xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
               >
                 <div>
                   {/* Top status bar */}

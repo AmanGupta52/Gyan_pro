@@ -202,7 +202,7 @@ export function GameLobbyPage() {
                   className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
                     isReady
                       ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20 shadow-sm'
-                      : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'
+                      : 'border-slate-200 dark:border-slate-800 glass'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -234,7 +234,7 @@ export function GameLobbyPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-400 capitalize">
+                      <p className="text-[11px] text-slate-600 dark:text-slate-400 capitalize">
                         {isLeaderMember ? 'Squad Leader' : 'Team Member'}
                       </p>
                     </div>
@@ -304,7 +304,7 @@ export function GameLobbyPage() {
             <span>Rules of Play</span>
           </h2>
 
-          <Card className="p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-2xl space-y-4 text-xs text-slate-600 dark:text-slate-300">
+          <Card className="p-5 glass border-slate-200 dark:border-slate-800 rounded-2xl space-y-4 text-xs text-slate-600 dark:text-slate-300">
             <div className="space-y-1.5">
               <p className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />

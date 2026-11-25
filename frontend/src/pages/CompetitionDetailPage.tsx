@@ -185,7 +185,7 @@ export function CompetitionDetailPage() {
       </Link>
 
       {/* Main Overview Card */}
-      <Card className="p-6 sm:p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md space-y-6">
+      <Card className="p-6 sm:p-8 glass rounded-3xl shadow-md space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -238,7 +238,7 @@ export function CompetitionDetailPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-center">
             <Users className="w-5 h-5 text-brand-blue mx-auto mb-1" />
-            <p className="text-xs text-slate-400">Participation</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Participation</p>
             <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
               {competition.participationMode === 'individual'
                 ? 'Solo Player'
@@ -248,7 +248,7 @@ export function CompetitionDetailPage() {
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-center">
             <Clock className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
-            <p className="text-xs text-slate-400">Time per Q</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Time per Q</p>
             <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
               {competition.timePerQuestionSeconds}s (~{totalMinutes} min)
             </p>
@@ -256,7 +256,7 @@ export function CompetitionDetailPage() {
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-center">
             <Trophy className="w-5 h-5 text-amber-500 mx-auto mb-1" />
-            <p className="text-xs text-slate-400">Questions</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Questions</p>
             <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
               {competition.numberOfQuestions} Qs
             </p>
@@ -264,7 +264,7 @@ export function CompetitionDetailPage() {
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-center">
             <Award className="w-5 h-5 text-blue-500 mx-auto mb-1" />
-            <p className="text-xs text-slate-400">Certificates</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Certificates</p>
             <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
               QR Verifiable
             </p>

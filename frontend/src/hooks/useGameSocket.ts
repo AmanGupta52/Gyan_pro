@@ -127,7 +127,8 @@ export function useGameSocket(sessionId?: string) {
       setCurrentQuestionIndex(data.questionIndex);
       setTotalQuestions(data.totalQuestions);
       setSelectedOptions([]);
-      setIsAnswerLocked(false);
+      // After a reconnect the server tells us if this player already locked an answer
+      setIsAnswerLocked(Boolean(data.alreadyAnswered));
       setQuestionEndedData(null);
       startLocalCountdown(data.deadline, data.serverTime);
     });
@@ -164,12 +165,23 @@ export function useGameSocket(sessionId?: string) {
       navigate('/dashboard');
     });
 
-    // Join the session
-    socket.emit('game:join', { sessionId }, (res: any) => {
-      if (res && !res.success) {
-        toast.error(res.error || 'Failed to join game lobby');
+    // Join the session now, and re-join automatically after every reconnect so the
+    // server can restore the current question, remaining time and locked answers.
+    const joinSession = () => {
+      socket.emit('game:join', { sessionId }, (res: any) => {
+        if (res && !res.success) {
+          toast.error(res.error || 'Failed to join game lobby');
+        }
+      });
+    };
+    const handleDisconnect = (reason: string) => {
+      if (reason !== 'io client disconnect' && reason !== 'io server disconnect') {
+        toast.warning('Connection lost — reconnecting…');
       }
-    });
+    };
+    socket.on('connect', joinSession);
+    socket.on('disconnect', handleDisconnect);
+    if (socket.connected) joinSession();
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -182,6 +194,8 @@ export function useGameSocket(sessionId?: string) {
       socket.off('game:finished');
       socket.off('game:error');
       socket.off('session:superseded');
+      socket.off('connect', joinSession);
+      socket.off('disconnect', handleDisconnect);
     };
   }, [sessionId, startLocalCountdown, navigate]);
 

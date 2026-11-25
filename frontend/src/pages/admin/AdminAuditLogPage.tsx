@@ -90,13 +90,13 @@ export function AdminAuditLogPage() {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-slate-400">
+              <TableCell colSpan={6} className="text-center py-8 text-slate-600 dark:text-slate-400">
                 Loading audit records...
               </TableCell>
             </TableRow>
           ) : logs.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-slate-400">
+              <TableCell colSpan={6} className="text-center py-8 text-slate-600 dark:text-slate-400">
                 No audit entries found.
               </TableCell>
             </TableRow>
@@ -117,7 +117,7 @@ export function AdminAuditLogPage() {
                 <p className="font-semibold text-xs text-slate-900 dark:text-white">
                   {log.userId?.name || 'System / Seed'}
                 </p>
-                <p className="text-[10px] text-slate-400">{log.userId?.email}</p>
+                <p className="text-[10px] text-slate-600 dark:text-slate-400">{log.userId?.email}</p>
               </TableCell>
               <TableCell>
                 <Badge variant="info" size="sm" className="font-mono text-[10px]">
@@ -127,7 +127,7 @@ export function AdminAuditLogPage() {
               <TableCell className="text-xs font-medium text-slate-700 dark:text-slate-300">
                 {log.entityType}
               </TableCell>
-              <TableCell className="text-xs font-mono text-slate-400">
+              <TableCell className="text-xs font-mono text-slate-600 dark:text-slate-400">
                 {log.ipAddress || '127.0.0.1'}
               </TableCell>
               <TableCell className="max-w-xs truncate text-[11px] font-mono text-slate-500">

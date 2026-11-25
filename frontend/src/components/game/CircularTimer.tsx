@@ -62,7 +62,7 @@ export function CircularTimer({
         <span className={`font-mono font-black text-lg ${colorClass}`}>
           {validRemaining}
         </span>
-        <span className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold -mt-1">
+        <span className="text-[9px] uppercase tracking-wider text-slate-600 dark:text-slate-400 font-semibold -mt-1">
           sec
         </span>
       </div>

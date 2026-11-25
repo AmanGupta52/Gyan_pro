@@ -165,7 +165,7 @@ export function SupportPage() {
         {/* Left Column: Shagun Amount & Details (7 cols) */}
         <div className="lg:col-span-7 space-y-6">
           {/* Card: Select Shagun Contribution */}
-          <Card className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm rounded-2xl space-y-6">
+          <Card className="p-6 glass shadow-sm rounded-2xl space-y-6">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2">
                 <Gift className="w-5 h-5 text-brand-gold" />
@@ -190,7 +190,7 @@ export function SupportPage() {
                     className={`flex flex-col items-start p-3.5 rounded-xl border transition-all text-left ${
                       isSelected
                         ? 'border-brand-blue bg-blue-50/60 dark:bg-blue-950/40 text-brand-blue ring-2 ring-brand-blue/20 shadow-sm'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300'
+                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 glass text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     <span className="font-extrabold text-base tracking-tight flex items-center">
@@ -214,7 +214,7 @@ export function SupportPage() {
                 Or Enter Custom Shagun Amount (INR)
               </label>
               <div className="relative rounded-xl shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-600 dark:text-slate-400">
                   <IndianRupee className="w-5 h-5 font-bold" />
                 </div>
                 <input
@@ -224,7 +224,7 @@ export function SupportPage() {
                   placeholder="e.g. 501"
                   className="block w-full pl-10 pr-16 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-lg focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue"
                 />
-                <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-xs font-semibold text-slate-400">
+                <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-xs font-semibold text-slate-600 dark:text-slate-400">
                   INR
                 </div>
               </div>
@@ -284,7 +284,7 @@ export function SupportPage() {
           </Card>
 
           {/* Card: Direct Bank Wire (NEFT / RTGS / IMPS) */}
-          <Card className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm rounded-2xl space-y-5">
+          <Card className="p-6 glass shadow-sm rounded-2xl space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-brand-blue" />
@@ -363,7 +363,7 @@ export function SupportPage() {
 
         {/* Right Column: Dynamic QR Code & Payment Intents (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <Card className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg rounded-2xl flex flex-col items-center text-center space-y-5">
+          <Card className="p-6 glass shadow-lg rounded-2xl flex flex-col items-center text-center space-y-5">
             <div className="w-full flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                 <QrCode className="w-4 h-4 text-brand-blue" />
@@ -387,7 +387,7 @@ export function SupportPage() {
                   className="w-60 h-60 object-contain rounded-lg transition-transform hover:scale-[1.02] duration-200"
                 />
               ) : (
-                <div className="w-60 h-60 flex flex-col items-center justify-center text-slate-400 text-xs">
+                <div className="w-60 h-60 flex flex-col items-center justify-center text-slate-600 dark:text-slate-400 text-xs">
                   <QrCode className="w-12 h-12 mb-2 text-slate-300" />
                   QR generation pending...
                 </div>

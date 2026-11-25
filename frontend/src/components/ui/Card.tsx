@@ -8,10 +8,9 @@ import { cn } from '@/lib/utils';
  * ───────────────────────────────────────────── */
 
 const variantStyles = {
-  default: 'bg-white dark:bg-navy-900/60 shadow-soft',
-  outlined: 'bg-white dark:bg-navy-900/60 border border-slate-200 dark:border-slate-200/10',
-  elevated:
-    'bg-white dark:bg-navy-900/60 shadow-soft hover:shadow-lifted transition-shadow duration-200',
+  default: 'glass',
+  outlined: 'glass',
+  elevated: 'glass hover:-translate-y-0.5 hover:shadow-lifted transition-all duration-200',
 } as const;
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {

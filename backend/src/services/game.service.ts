@@ -216,6 +216,53 @@ export async function advanceToQuestion(
   };
 }
 
+/**
+ * Read-only view of the question that is currently active, used when a player
+ * (re)joins mid-game. Unlike advanceToQuestion() this NEVER changes the persisted
+ * deadline, so reconnecting cannot grant extra time. Correct answers are not selected.
+ */
+export async function getActiveQuestionState(
+  sessionId: string,
+  userId: string
+): Promise<{
+  questionIndex: number;
+  totalQuestions: number;
+  question: IQuestion;
+  timeLimit: number;
+  deadline: Date;
+  alreadyAnswered: boolean;
+} | null> {
+  const session = await GameSession.findById(sessionId);
+  if (!session || session.status !== 'question_active' || !session.questionDeadline) {
+    return null;
+  }
+
+  const questionId = session.questionIds[session.currentQuestionIndex];
+  const question = await Question.findById(questionId);
+  if (!question) return null;
+
+  const compQuestion = await CompetitionQuestion.findOne({
+    competitionId: session.competitionId,
+    questionId,
+  });
+  const timeLimit = compQuestion?.timeLimitOverride || question.timeLimit || 30;
+
+  const existing = await PlayerAnswer.exists({
+    gameSessionId: session._id,
+    userId,
+    questionId,
+  });
+
+  return {
+    questionIndex: session.currentQuestionIndex,
+    totalQuestions: session.questionIds.length,
+    question,
+    timeLimit,
+    deadline: session.questionDeadline,
+    alreadyAnswered: Boolean(existing),
+  };
+}
+
 export async function submitAnswer(
   sessionId: string,
   userId: string,

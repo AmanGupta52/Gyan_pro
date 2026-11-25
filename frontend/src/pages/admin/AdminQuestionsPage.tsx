@@ -218,13 +218,13 @@ export function AdminQuestionsPage() {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-slate-400">
+              <TableCell colSpan={6} className="text-center py-8 text-slate-600 dark:text-slate-400">
                 Loading question bank...
               </TableCell>
             </TableRow>
           ) : questions.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-slate-400">
+              <TableCell colSpan={6} className="text-center py-8 text-slate-600 dark:text-slate-400">
                 No questions found. Click "Add Question" to curate questions.
               </TableCell>
             </TableRow>
@@ -349,7 +349,7 @@ export function AdminQuestionsPage() {
                     placeholder={`Option ${optId} text...`}
                     required
                     {...register(`options.${idx}.text` as any, { required: true })}
-                    className="flex-1 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                    className="flex-1 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-800 glass text-xs focus:outline-none focus:ring-1 focus:ring-brand-blue"
                   />
                 </div>
               );

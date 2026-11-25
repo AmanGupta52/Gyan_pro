@@ -124,13 +124,13 @@ export function AdminUsersPage() {
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center gap-3">
         <form onSubmit={handleSearchSubmit} className="flex-1 w-full relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 dark:text-slate-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, email or phone..."
-            className="w-full h-10 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs focus:outline-none focus:ring-1 focus:ring-brand-blue"
+            className="w-full h-10 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-slate-800 glass text-xs focus:outline-none focus:ring-1 focus:ring-brand-blue"
           />
         </form>
 
@@ -164,13 +164,13 @@ export function AdminUsersPage() {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-slate-400">
+              <TableCell colSpan={6} className="text-center py-8 text-slate-600 dark:text-slate-400">
                 Loading users...
               </TableCell>
             </TableRow>
           ) : users.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-slate-400">
+              <TableCell colSpan={6} className="text-center py-8 text-slate-600 dark:text-slate-400">
                 No users found matching search criteria.
               </TableCell>
             </TableRow>
@@ -182,14 +182,14 @@ export function AdminUsersPage() {
                   <p className="font-semibold text-slate-900 dark:text-white">
                     {u.name}
                   </p>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400">
                     Joined {new Date(u.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </TableCell>
               <TableCell className="text-xs text-slate-600 dark:text-slate-300">
                 <p>{u.email}</p>
-                {u.phone && <p className="text-slate-400">{u.phone}</p>}
+                {u.phone && <p className="text-slate-600 dark:text-slate-400">{u.phone}</p>}
               </TableCell>
               <TableCell>
                 <Badge

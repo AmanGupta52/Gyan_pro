@@ -125,3 +125,15 @@ describe('Security Hardening & Protection Tests', () => {
     });
   });
 });
+
+describe('Sanitizer keeps credentials intact', () => {
+  it('does not alter password/token strings that contain operator-like text', () => {
+    const req = {
+      body: { password: 'Pa$or1234$in!', token: 'abc$ne', note: 'x$gt' },
+    } as unknown as Request;
+    sanitize(req, {} as Response, () => {});
+    expect(req.body.password).toBe('Pa$or1234$in!');
+    expect(req.body.token).toBe('abc$ne');
+    expect(req.body.note).toBe('x');
+  });
+});

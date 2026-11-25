@@ -135,7 +135,7 @@ export function CertificatesPage() {
                     Category: <strong>{cert.competition.category}</strong> • Squad:{' '}
                     <strong>{cert.team.name}</strong>
                   </p>
-                  <p className="text-[11px] font-mono text-slate-400 mt-1">
+                  <p className="text-[11px] font-mono text-slate-600 dark:text-slate-400 mt-1">
                     ID: {cert.certificateId}
                   </p>
                 </div>
@@ -143,19 +143,19 @@ export function CertificatesPage() {
                 {/* Performance Pill Grid */}
                 <div className="grid grid-cols-3 gap-2.5 p-3 rounded-2xl bg-white/70 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 text-center">
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-slate-400">Rank</span>
+                    <span className="text-[9px] uppercase font-bold text-slate-600 dark:text-slate-400">Rank</span>
                     <p className="text-base font-black font-display text-amber-600 dark:text-amber-400">
                       #{cert.rank}
                     </p>
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-slate-400">Score</span>
+                    <span className="text-[9px] uppercase font-bold text-slate-600 dark:text-slate-400">Score</span>
                     <p className="text-base font-black font-display text-brand-blue">
                       {cert.score}
                     </p>
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-slate-400">Accuracy</span>
+                    <span className="text-[9px] uppercase font-bold text-slate-600 dark:text-slate-400">Accuracy</span>
                     <p className="text-base font-black font-display text-emerald-600 dark:text-emerald-400">
                       {Math.round(cert.accuracy * 100)}%
                     </p>

@@ -95,7 +95,7 @@ export function PlayerSearchModal({
       <div className="space-y-4 pt-2">
         {/* Search input field */}
         <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 dark:text-slate-400" />
           <input
             type="text"
             value={query}
@@ -105,7 +105,7 @@ export function PlayerSearchModal({
             autoFocus
           />
           {loading && (
-            <Loader2 className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin" />
+            <Loader2 className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 dark:text-slate-400 animate-spin" />
           )}
         </div>
 
@@ -118,7 +118,7 @@ export function PlayerSearchModal({
           )}
 
           {query.trim().length < 2 && (
-            <div className="py-8 text-center text-xs text-slate-400 dark:text-slate-500">
+            <div className="py-8 text-center text-xs text-slate-600 dark:text-slate-500">
               Type at least 2 characters to search by name or contact.
             </div>
           )}
@@ -149,7 +149,7 @@ export function PlayerSearchModal({
                       {player.city && <span>• {player.city}</span>}
                     </div>
                     {player.email && (
-                      <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                      <p className="text-[11px] text-slate-600 dark:text-slate-500">
                         {player.email}
                       </p>
                     )}

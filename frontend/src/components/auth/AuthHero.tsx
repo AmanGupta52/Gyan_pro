@@ -1,8 +1,9 @@
 import { Award, Zap, GraduationCap, ShieldCheck } from 'lucide-react';
+import { Mascot } from '@/components/brand/Mascot';
 
 export function AuthHero() {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-navy-900 via-navy-700 to-brand-blue text-white p-8 lg:p-12 flex flex-col justify-between min-h-[300px] lg:min-h-full rounded-3xl lg:rounded-none shadow-2xl lg:shadow-none">
+    <div className="gradient-electric relative overflow-hidden text-white p-8 lg:p-12 flex flex-col justify-between min-h-[300px] lg:min-h-full rounded-[28px] shadow-2xl">
       {/* Decorative background ambient circles */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
@@ -10,12 +11,13 @@ export function AuthHero() {
       {/* Floating animated ambient icons */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
         <div className="absolute top-12 left-10 text-3xl font-bold animate-pulse">?</div>
-        <div className="absolute top-1/4 right-12 text-2xl animate-bounce duration-1000">💡</div>
-        <div className="absolute bottom-1/3 left-16 text-3xl">⚛️</div>
+        <div className="absolute top-1/4 right-12 text-2xl animate-float">💡</div>
+        <div className="absolute bottom-1/3 left-16 text-3xl animate-wiggle">⚛️</div>
         <div className="absolute bottom-16 right-16 text-2xl font-bold">✨</div>
       </div>
 
       {/* Top Header & Branding */}
+      <Mascot className="absolute right-4 top-4 h-24 w-24 animate-float opacity-95 lg:h-32 lg:w-32" />
       <div className="relative z-10 space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold tracking-wide text-sky-200 border border-white/15">
           <Zap className="w-3.5 h-3.5 text-amber-300" />

@@ -78,7 +78,7 @@ export function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="py-16 text-center">
-        <p className="text-sm font-medium text-slate-400">Loading admin overview...</p>
+        <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Loading admin overview...</p>
       </div>
     );
   }
@@ -122,7 +122,7 @@ export function AdminDashboardPage() {
           return (
             <Card
               key={stat.label}
-              className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm flex items-center justify-between"
+              className="p-5 glass rounded-2xl shadow-sm flex items-center justify-between"
             >
               <div>
                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
@@ -131,7 +131,7 @@ export function AdminDashboardPage() {
                 <h3 className="text-2xl sm:text-3xl font-black font-display text-slate-900 dark:text-white mt-1">
                   {stat.value}
                 </h3>
-                <p className="text-[11px] text-slate-400 mt-0.5">{stat.subtext}</p>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">{stat.subtext}</p>
               </div>
 
               <div className={`p-3 rounded-2xl ${stat.color}`}>
@@ -144,7 +144,7 @@ export function AdminDashboardPage() {
 
       {/* Quick Launch Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm space-y-4">
+        <Card className="p-6 glass rounded-3xl shadow-sm space-y-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-brand-blue/10 text-brand-blue">
               <Trophy className="w-5 h-5" />
@@ -153,7 +153,7 @@ export function AdminDashboardPage() {
               <h4 className="font-bold text-sm text-slate-900 dark:text-white">
                 Competition Lifecycle
               </h4>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 Open registrations, advance matches, or archive.
               </p>
             </div>
@@ -168,7 +168,7 @@ export function AdminDashboardPage() {
           </Button>
         </Card>
 
-        <Card className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm space-y-4">
+        <Card className="p-6 glass rounded-3xl shadow-sm space-y-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-500">
               <HelpCircle className="w-5 h-5" />
@@ -177,7 +177,7 @@ export function AdminDashboardPage() {
               <h4 className="font-bold text-sm text-slate-900 dark:text-white">
                 Question Bank
               </h4>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 Curate single, multiple-correct, and image questions.
               </p>
             </div>
@@ -192,7 +192,7 @@ export function AdminDashboardPage() {
           </Button>
         </Card>
 
-        <Card className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm space-y-4">
+        <Card className="p-6 glass rounded-3xl shadow-sm space-y-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500">
               <ShieldCheck className="w-5 h-5" />
@@ -201,7 +201,7 @@ export function AdminDashboardPage() {
               <h4 className="font-bold text-sm text-slate-900 dark:text-white">
                 Audit Trail
               </h4>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 Track all administrative actions with IP stamps.
               </p>
             </div>

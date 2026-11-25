@@ -39,9 +39,19 @@ export function LoginForm({ onForgotPasswordClick }: LoginFormProps) {
       const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
     } catch (err: unknown) {
-      // In accordance with security specification: strict generic message
-      setGenericError('Invalid email or password');
-      toast.error('Invalid email or password');
+      // Credential failures stay strictly generic; other failures (rate limit, network,
+      // deactivated account) get their real, human-readable message.
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      const apiMessage = (err as { response?: { data?: { error?: { message?: string } } } })
+        ?.response?.data?.error?.message;
+      const message =
+        status === 401 || !status
+          ? status === 401
+            ? 'Invalid email or password'
+            : 'Cannot reach the server. Check your connection and try again.'
+          : apiMessage || 'Something went wrong. Please try again.';
+      setGenericError(message);
+      toast.error(message);
     }
   };
 

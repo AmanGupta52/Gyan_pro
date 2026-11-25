@@ -74,22 +74,22 @@ export function MatchHistoryPage() {
 
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm text-center">
-          <p className="text-[10px] font-bold uppercase text-slate-400">Matches Played</p>
+        <Card className="p-5 glass rounded-2xl shadow-sm text-center">
+          <p className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Matches Played</p>
           <p className="text-2xl font-black font-display text-slate-900 dark:text-white mt-1">
             {totalMatches}
           </p>
         </Card>
 
-        <Card className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm text-center">
-          <p className="text-[10px] font-bold uppercase text-slate-400">Average Accuracy</p>
+        <Card className="p-5 glass rounded-2xl shadow-sm text-center">
+          <p className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Average Accuracy</p>
           <p className="text-2xl font-black font-display text-emerald-500 mt-1">
             {avgAccuracy}%
           </p>
         </Card>
 
-        <Card className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm text-center">
-          <p className="text-[10px] font-bold uppercase text-slate-400">Total Points Won</p>
+        <Card className="p-5 glass rounded-2xl shadow-sm text-center">
+          <p className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Total Points Won</p>
           <p className="text-2xl font-black font-display text-brand-blue mt-1">
             {totalScoreEarned} pts
           </p>
@@ -112,13 +112,13 @@ export function MatchHistoryPage() {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-10 text-slate-400">
+              <TableCell colSpan={7} className="text-center py-10 text-slate-600 dark:text-slate-400">
                 Loading tournament record...
               </TableCell>
             </TableRow>
           ) : history.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-10 text-slate-400">
+              <TableCell colSpan={7} className="text-center py-10 text-slate-600 dark:text-slate-400">
                 You haven't participated in any tournaments yet. Join a live match!
               </TableCell>
             </TableRow>

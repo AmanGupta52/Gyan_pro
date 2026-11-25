@@ -134,7 +134,7 @@ export function NotificationsPage() {
               className={`p-4 rounded-2xl border transition-colors flex items-start justify-between gap-4 ${
                 !n.isRead
                   ? 'bg-blue-50/40 dark:bg-blue-950/20 border-brand-blue/30'
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
+                  : 'glass border-slate-200 dark:border-slate-800'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -149,7 +149,7 @@ export function NotificationsPage() {
                     {n.message}
                   </p>
                   <div className="mt-2 flex items-center gap-3">
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[10px] text-slate-600 dark:text-slate-400">
                       {new Date(n.createdAt).toLocaleString('en-IN', {
                         timeZone: 'Asia/Kolkata',
                         dateStyle: 'medium',
@@ -172,7 +172,7 @@ export function NotificationsPage() {
                 <button
                   type="button"
                   onClick={() => handleMarkAsRead(n._id)}
-                  className="text-xs text-slate-400 hover:text-brand-blue p-1"
+                  className="text-xs text-slate-600 dark:text-slate-400 hover:text-brand-blue p-1"
                   title="Mark as read"
                 >
                   <Check className="w-4 h-4" />

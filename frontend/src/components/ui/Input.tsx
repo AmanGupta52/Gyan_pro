@@ -73,9 +73,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               [errorId, helperId].filter(Boolean).join(' ') || undefined
             }
             className={cn(
-              'flex h-11 w-full rounded-input border bg-white px-4 text-sm',
-              'text-slate-700 placeholder:text-slate-700/40',
-              'dark:bg-navy-900/50 dark:text-slate-200 dark:placeholder:text-slate-200/40',
+              'flex h-12 w-full rounded-2xl border bg-white/70 px-4 text-sm backdrop-blur',
+              'text-slate-800 placeholder:text-slate-500',
+              'dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-400',
               'transition-colors duration-150',
               'outline-none focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue',
               error

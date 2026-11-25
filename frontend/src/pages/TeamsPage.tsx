@@ -251,7 +251,7 @@ export function TeamsPage() {
                 return (
                   <Card
                     key={team._id}
-                    className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm flex flex-col justify-between"
+                    className="p-6 glass rounded-3xl shadow-sm flex flex-col justify-between"
                   >
                     <div>
                       {/* Top squad bar */}
@@ -305,7 +305,7 @@ export function TeamsPage() {
 
                       {/* Member Slot Visualizer */}
                       <div className="mt-5 space-y-2">
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
                           Squad Lineup
                         </h4>
 
@@ -322,7 +322,7 @@ export function TeamsPage() {
                                   <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
                                     {member.name}
                                   </p>
-                                  <p className="text-[10px] text-slate-400 capitalize">
+                                  <p className="text-[10px] text-slate-600 dark:text-slate-400 capitalize">
                                     {member.role}
                                   </p>
                                 </div>
@@ -332,7 +332,7 @@ export function TeamsPage() {
                                 <button
                                   type="button"
                                   onClick={() => handleRemoveMember(team._id, member.userId)}
-                                  className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
+                                  className="text-slate-600 dark:text-slate-400 hover:text-rose-500 p-1 transition-colors"
                                   title="Remove member"
                                 >
                                   <X className="w-3.5 h-3.5" />
@@ -353,7 +353,7 @@ export function TeamsPage() {
                                   toast.info('Only the squad leader can invite players.');
                                 }
                               }}
-                              className="p-2.5 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-brand-blue/50 dark:hover:border-brand-blue/50 flex items-center justify-center gap-1.5 text-xs text-slate-400 hover:text-brand-blue transition-colors group cursor-pointer"
+                              className="p-2.5 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-brand-blue/50 dark:hover:border-brand-blue/50 flex items-center justify-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-brand-blue transition-colors group cursor-pointer"
                             >
                               <UserPlus className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
                               <span>{isLeader ? 'Invite' : 'Open Slot'}</span>
@@ -387,7 +387,7 @@ export function TeamsPage() {
                         </>
                       ) : (
                         <>
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-slate-600 dark:text-slate-400">
                             Member since {new Date(team.members.find(m => m.userId === user?._id)?.joinedAt || '').toLocaleDateString('en-IN')}
                           </span>
                           <Button
@@ -422,7 +422,7 @@ export function TeamsPage() {
               {invitations.map((inv) => (
                 <Card
                   key={inv._id}
-                  className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-between gap-4"
+                  className="p-5 glass rounded-2xl flex items-center justify-between gap-4"
                 >
                   <div className="flex items-center gap-3">
                     <Avatar name={inv.senderId?.name} src={inv.senderId?.photo} size="lg" />
@@ -437,7 +437,7 @@ export function TeamsPage() {
                         <Badge variant="info" size="sm">
                           {inv.teamId?.category}
                         </Badge>
-                        <span className="text-[11px] text-slate-400">
+                        <span className="text-[11px] text-slate-600 dark:text-slate-400">
                           {inv.teamId?.currentMemberCount} / {inv.teamId?.size} players
                         </span>
                       </div>

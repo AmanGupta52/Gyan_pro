@@ -30,20 +30,33 @@ export function sanitize(req: Request, _res: Response, next: NextFunction): void
  * - Strings: strip MongoDB operator patterns like "$gt", "$ne", etc.
  * - Other primitives: pass through unchanged
  */
-function sanitizeValue(value: unknown): unknown {
+/** Fields whose string value must be passed through untouched (e.g. passwords may legally contain "$or"). */
+const RAW_STRING_KEYS = new Set([
+  'password',
+  'confirmPassword',
+  'currentPassword',
+  'newPassword',
+  'token',
+  'refreshToken',
+]);
+
+function sanitizeValue(value: unknown, key?: string): unknown {
   if (value === null || value === undefined) {
     return value;
   }
 
-  // Sanitize strings — strip $ operators
+  // Sanitize strings — strip $ operators (except for credential/token fields)
   if (typeof value === 'string') {
+    if (key && RAW_STRING_KEYS.has(key)) {
+      return value;
+    }
     // Remove any occurrence of MongoDB operators like $gt, $ne, $or, etc.
     return value.replace(/\$(?:gt|gte|lt|lte|ne|eq|in|nin|or|and|not|nor|regex|where|exists|type|mod|all|size|elemMatch)\b/gi, '');
   }
 
   // Sanitize arrays
   if (Array.isArray(value)) {
-    return value.map(sanitizeValue);
+    return value.map((item) => sanitizeValue(item, key));
   }
 
   // Sanitize objects
@@ -58,7 +71,7 @@ function sanitizeValue(value: unknown): unknown {
       if (key.includes('.')) {
         continue;
       }
-      sanitized[key] = sanitizeValue(val);
+      sanitized[key] = sanitizeValue(val, key);
     }
     return sanitized;
   }

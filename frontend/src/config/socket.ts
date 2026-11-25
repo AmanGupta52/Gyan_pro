@@ -1,4 +1,5 @@
 import { io, type Socket } from 'socket.io-client';
+import { getAccessToken } from '@/config/api';
 
 /* ─────────────────────────────────────────────
  * Socket.IO client for real-time features.
@@ -14,6 +15,8 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL ?? 'http://localhost:5000';
 /** Singleton socket instance — starts disconnected. */
 export const socket: Socket = io(SOCKET_URL, {
   autoConnect: false,
+  // Function form: evaluated on every (re)connect so a refreshed access token is used
+  auth: (cb) => cb({ token: getAccessToken() }),
   reconnection: true,
   reconnectionAttempts: 10,
   reconnectionDelay: 1_000,
@@ -28,8 +31,8 @@ export const socket: Socket = io(SOCKET_URL, {
  * can verify the user before accepting the connection.
  */
 export function connectSocket(token: string): void {
-  // Update the auth payload before connecting
-  socket.auth = { token };
+  // Auth payload is resolved lazily (see `auth` above); keep the in-memory token in sync.
+  void token;
 
   if (socket.connected) {
     // Force a reconnect so the new token is sent

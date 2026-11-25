@@ -38,7 +38,7 @@ export function TabsList({ className, children }: TabsListProps) {
   return (
     <RadixTabs.List
       className={cn(
-        'inline-flex w-full items-center border-b border-slate-200 dark:border-slate-200/10',
+        'inline-flex w-full items-center gap-1 rounded-2xl p-1 bg-slate-900/5 dark:bg-white/10',
         className,
       )}
     >
@@ -60,17 +60,14 @@ export function TabsTrigger({ value, className, children }: TabsTriggerProps) {
     <RadixTabs.Trigger
       value={value}
       className={cn(
-        'relative flex-1 px-4 py-2.5 text-sm font-medium text-center',
-        'text-slate-700/60 dark:text-slate-200/60',
-        'transition-colors duration-150',
-        'hover:text-slate-700 dark:hover:text-slate-200',
-        'outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40 focus-visible:ring-inset',
-        // Active tab styles
-        'data-[state=active]:text-brand-blue',
-        // Animated underline via pseudo-element
-        'after:absolute after:inset-x-0 after:bottom-0 after:h-0.5',
-        'after:scale-x-0 after:bg-brand-blue after:transition-transform after:duration-200',
-        'data-[state=active]:after:scale-x-100',
+        'relative flex-1 min-h-[44px] px-4 py-2 text-sm font-semibold text-center rounded-xl',
+        'text-slate-600 dark:text-slate-300',
+        'transition-all duration-200',
+        'hover:text-slate-900 dark:hover:text-white',
+        'outline-none focus-visible:ring-2 focus-visible:ring-electric-500/50',
+        // Active tab: raised white/glass pill
+        'data-[state=active]:bg-white data-[state=active]:text-electric-600 data-[state=active]:shadow-soft',
+        'dark:data-[state=active]:bg-white/15 dark:data-[state=active]:text-white',
         className,
       )}
     >

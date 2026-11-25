@@ -12,7 +12,6 @@ process.env.FRONTEND_URL = 'http://localhost:5173';
 process.env.CLOUDINARY_CLOUD_NAME = 'test_cloud';
 process.env.CLOUDINARY_API_KEY = 'test_key';
 process.env.CLOUDINARY_API_SECRET = 'test_secret';
-process.env.EMAIL_FROM = 'test@gyan26.com';
 
 export default defineConfig({
   test: {
