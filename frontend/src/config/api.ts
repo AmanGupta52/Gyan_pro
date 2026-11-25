@@ -20,7 +20,7 @@ const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true, // send httpOnly refresh cookie on web
   headers: { 'Content-Type': 'application/json' },
-  timeout: 30_000,
+  timeout: 60_000, // Render free tier cold starts can take ~50s
 });
 
 // ── In-memory token store ─────────────────────

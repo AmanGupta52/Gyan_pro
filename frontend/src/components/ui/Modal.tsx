@@ -80,7 +80,7 @@ export function Modal({
                 <Dialog.Close
                   className={cn(
                     'absolute right-4 top-4 rounded-lg p-1.5',
-                    'text-slate-700/60 hover:text-slate-700 hover:bg-slate-200/60',
+                    'text-slate-700/60 hover:text-slate-700 hover:bg-slate-200/60 dark:text-slate-200',
                     'dark:text-slate-200/60 dark:hover:text-slate-200 dark:hover:bg-navy-700/60',
                     'outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40',
                     'transition-colors'

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import mongoose from 'mongoose';
 import { env } from '../src/config/env.js';
 import { User } from '../src/models/User.js';

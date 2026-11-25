@@ -40,8 +40,8 @@ jobs:
       - name: Build web application
         run: npm run build
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || vars.VITE_API_URL }}
+          VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL || vars.VITE_SOCKET_URL }}
 
       - name: Sync Capacitor Android
         run: npx cap sync android
@@ -93,8 +93,8 @@ jobs:
       - name: Build web application
         run: npm run build
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || vars.VITE_API_URL }}
+          VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL || vars.VITE_SOCKET_URL }}
 
       - name: Sync Capacitor Android
         run: npx cap sync android
