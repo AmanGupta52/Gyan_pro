@@ -1,10 +1,16 @@
+import crypto from 'node:crypto';
 import mongoose from 'mongoose';
 import { User } from '../models/User.js';
 import { Team } from '../models/Team.js';
 import { Competition, isValidTransition, type CompetitionStatus } from '../models/Competition.js';
 import { CompetitionQuestion } from '../models/CompetitionQuestion.js';
 import { Question } from '../models/Question.js';
+import { Quiz } from '../models/Quiz.js';
 import { AppError } from '../utils/AppError.js';
+import { hashPassword } from '../utils/password.js';
+import { sendTeacherInviteEmail } from './email.service.js';
+import { env } from '../config/env.js';
+import { logger } from '../utils/logger.js';
 import { logAudit } from './audit.service.js';
 import { finalizeCompetitionRanks } from './result.service.js';
 import { issueCertificatesForCompetition } from './certificate.service.js';
@@ -20,6 +26,8 @@ export async function getDashboardStats() {
     liveCompetitions,
     completedCompetitions,
     totalQuestions,
+    totalTeachers,
+    totalQuizzes,
   ] = await Promise.all([
     User.countDocuments(),
     User.countDocuments({ isActive: true }),
@@ -29,6 +37,8 @@ export async function getDashboardStats() {
     Competition.countDocuments({ status: 'Live' }),
     Competition.countDocuments({ status: 'Completed' }),
     Question.countDocuments({ status: 'published' }),
+    User.countDocuments({ role: 'teacher' }),
+    Quiz.countDocuments({ status: 'published' }),
   ]);
 
   return {
@@ -40,6 +50,8 @@ export async function getDashboardStats() {
     liveCompetitions,
     completedCompetitions,
     totalQuestions,
+    totalTeachers,
+    totalQuizzes,
     certificatesIssued: 0, // In Phase 6 will count real certificates
   };
 }
@@ -62,7 +74,7 @@ export async function getUsersList(params: {
     filter.educationLevel = educationLevel;
   }
   if (search && search.trim()) {
-    const rx = new RegExp(search.trim(), 'i');
+    const rx = new RegExp(search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     filter.$or = [{ name: rx }, { email: rx }, { phone: search.trim() }];
   }
 
@@ -98,6 +110,10 @@ export async function updateUserRole(
   const superAdmin = await User.findById(superAdminId);
   if (!superAdmin || superAdmin.role !== 'superAdmin') {
     throw AppError.forbidden('Only superAdmin can change user roles.');
+  }
+
+  if (superAdminId === targetUserId) {
+    throw AppError.badRequest('You cannot change your own role. Ask another superAdmin.');
   }
 
   const user = await User.findById(targetUserId);
@@ -289,4 +305,140 @@ export async function getCompetitionQuestions(competitionId: string) {
     .lean();
 
   return list;
+}
+
+// ─── Teachers (superAdmin only) ───────────────────────────────
+
+export interface CreateTeacherInput {
+  name: string;
+  email: string;
+  phone?: string;
+  institution?: string;
+}
+
+async function issueSetupToken(user: InstanceType<typeof User>): Promise<string> {
+  const token = crypto.randomBytes(32).toString('hex');
+  user.passwordResetToken = crypto.createHash('sha256').update(token).digest('hex');
+  user.passwordResetExpires = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48h
+  await user.save();
+  return token;
+}
+
+/**
+ * superAdmin adds a teacher. The teacher gets an email with a one-time link to choose
+ * their own password - no password is ever typed, shown or emailed in plain text.
+ */
+export async function createTeacher(
+  superAdminId: string,
+  input: CreateTeacherInput,
+  ipAddress?: string
+) {
+  const creator = await User.findById(superAdminId);
+  if (!creator || creator.role !== 'superAdmin') {
+    throw AppError.forbidden('Only superAdmin can add teachers.');
+  }
+
+  if (await User.findOne({ email: input.email })) {
+    throw AppError.conflict('An account with this email already exists. Use "Users & Roles" to make that person a teacher.');
+  }
+  if (input.phone && (await User.findOne({ phone: input.phone }))) {
+    throw AppError.conflict('An account with this phone number already exists');
+  }
+
+  const user = await User.create({
+    name: input.name,
+    email: input.email,
+    phone: input.phone,
+    institution: input.institution,
+    role: 'teacher',
+    // Unusable random password until the teacher sets their own via the invite link
+    password: await hashPassword(crypto.randomBytes(32).toString('hex') + 'aA1!'),
+    isEmailVerified: true, // the invite email itself proves ownership
+    createdBy: creator._id,
+  });
+
+  const token = await issueSetupToken(user);
+  let emailSent = true;
+  try {
+    await sendTeacherInviteEmail(user, token, creator.name);
+  } catch (err) {
+    emailSent = false;
+    logger.error({ err, userId: user._id }, 'Failed to send teacher invite email');
+  }
+
+  await logAudit({
+    userId: superAdminId,
+    action: 'TEACHER_CREATE',
+    entityType: 'User',
+    entityId: user._id.toString(),
+    details: { email: user.email, name: user.name, emailSent },
+    ipAddress,
+  });
+
+  return {
+    teacher: user.toPublicJSON(),
+    emailSent,
+    // Convenience for local development only; never exposed in production
+    setupLink:
+      env.NODE_ENV !== 'production'
+        ? `${env.FRONTEND_URL}/reset-password?token=${encodeURIComponent(token)}`
+        : undefined,
+  };
+}
+
+export async function resendTeacherInvite(superAdminId: string, teacherId: string, ipAddress?: string) {
+  const creator = await User.findById(superAdminId);
+  if (!creator || creator.role !== 'superAdmin') {
+    throw AppError.forbidden('Only superAdmin can invite teachers.');
+  }
+  const user = await User.findById(teacherId);
+  if (!user || user.role !== 'teacher') {
+    throw AppError.notFound('Teacher not found');
+  }
+
+  const token = await issueSetupToken(user);
+  await sendTeacherInviteEmail(user, token, creator.name);
+
+  await logAudit({
+    userId: superAdminId,
+    action: 'TEACHER_INVITE_RESEND',
+    entityType: 'User',
+    entityId: teacherId,
+    details: { email: user.email },
+    ipAddress,
+  });
+
+  return {
+    message: 'Invite sent',
+    setupLink:
+      env.NODE_ENV !== 'production'
+        ? `${env.FRONTEND_URL}/reset-password?token=${encodeURIComponent(token)}`
+        : undefined,
+  };
+}
+
+export async function listTeachers() {
+  const teachers = await User.find({ role: 'teacher' })
+    .select('name email phone institution isActive isEmailVerified lastLoginAt createdAt')
+    .sort({ createdAt: -1 })
+    .lean();
+
+  const counts = await Quiz.aggregate([
+    { $match: { createdBy: { $in: teachers.map((t) => t._id) } } },
+    { $group: { _id: { teacher: '$createdBy', status: '$status' }, n: { $sum: 1 } } },
+  ]);
+  const byTeacher = new Map<string, { quizzes: number; published: number }>();
+  for (const c of counts) {
+    const key = c._id.teacher.toString();
+    const row = byTeacher.get(key) ?? { quizzes: 0, published: 0 };
+    row.quizzes += c.n;
+    if (c._id.status === 'published') row.published += c.n;
+    byTeacher.set(key, row);
+  }
+
+  return teachers.map((t) => ({
+    ...t,
+    quizCount: byTeacher.get(t._id.toString())?.quizzes ?? 0,
+    publishedQuizCount: byTeacher.get(t._id.toString())?.published ?? 0,
+  }));
 }

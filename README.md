@@ -273,6 +273,59 @@ All **9 test suites and 73 unit/integration tests** will execute and report pass
 
 ---
 
+## 🎓 Roles, Teachers, Quizzes & Solo Play
+
+| Role | What they can do |
+|------|------------------|
+| `player` (student) | Competitions, **solo quizzes**, **practice mode**, personal history & stats |
+| `teacher` | Everything a student can, plus write questions, build quizzes, see results of **their own** quizzes |
+| `admin` | Competitions, shared question bank, moderate **all** quizzes and questions |
+| `superAdmin` | Everything above, plus **add teachers** and change roles |
+
+**Adding a teacher (superAdmin):** Admin Panel → *Teachers* → *Add teacher*. The teacher gets an email with a one-time link (48 h) to choose their own password. In development, emails are logged to the console and the setup link is also shown in the dialog. Teachers land in the **Quiz Studio** (`/studio`) after login.
+
+**Quiz flow:** a teacher creates a quiz (own questions + the shared admin bank), publishes it, and shares the 6-character join code. Quizzes can be public (listed) or private (code only), with optional open/close times, attempt limits, pass mark, shuffle, speed bonus, wrong-answer penalty and three answer modes (after each question / after finish / exam mode).
+
+**Practice mode:** students pick level, subject, difficulty and length; questions are drawn only from the admin-curated bank (never from a teacher's private quiz questions, nor from questions fixed into a competition that has not finished).
+
+**Server-authoritative timing:** the countdown for each question starts on the server when the question is first served, so reloading never resets it, a wrong device clock cannot extend it, and answers are never sent to the browser before the question is answered.
+
+| Endpoint | Who |
+|----------|-----|
+| `POST /api/admin/teachers`, `POST /api/admin/teachers/:id/resend-invite` | superAdmin |
+| `GET /api/admin/teachers` | admin, superAdmin |
+| `GET/POST /api/quizzes`, `GET /api/quizzes/join/:code`, `GET /api/quizzes/:id`, `GET /api/quizzes/:id/leaderboard` | any logged-in user |
+| `GET /api/quizzes/mine`, `PATCH/DELETE /api/quizzes/:id`, `PATCH /api/quizzes/:id/status`, `GET /api/quizzes/:id/{questions,attempts,analytics}` | teacher (own), admin, superAdmin (all) |
+| `POST /api/solo/start`, `GET /api/solo/attempts/:id`, `POST /api/solo/attempts/:id/{answer,finish}`, `GET /api/solo/attempts/:id/result`, `GET /api/solo/{history,stats}` | any logged-in user (own attempts only) |
+| `GET /api/questions` (+ create/update/delete) | teacher (own + shared bank), admin, superAdmin. **Students can no longer browse the bank.** |
+
+### 🏫 Classes, assignments & deadlines
+
+Teachers (Quiz Studio → **Classes**) create a class and get a 6-character **class code**. Students join with the code (Quizzes → *Assigned*) or the teacher adds them by email. A teacher then **assigns a published quiz with a deadline** (optional opening time, optional "accept late work", optional note); every student is notified in-app.
+
+- Starting from an assignment grants access even to a private quiz and uses the **assignment's** deadline instead of the quiz's own window. After the deadline the quiz is locked, unless late work is allowed (those attempts are flagged *late*).
+- The teacher's **progress board** shows each student as *not started / in progress / submitted / submitted late / overdue* with best score and accuracy, can send one **reminder per hour** to students who have not finished, and can download a CSV.
+- Removing an assignment that students already played **cancels** it (results are kept); deleting is only possible when nothing was played.
+
+### 🎓 Quiz certificates
+
+When a student **passes** a quiz (pass mark reached, quiz mode only) and the teacher left *Award a certificate* on, a verifiable certificate (`GYAN26Q-YYYY-NNNNNN`) is issued automatically, once per student per quiz. It reuses the competition certificate PDF design, QR verification page (`/verify-certificate/:id`), download route and *My Certificates* page; the issuer is the quiz creator, so it is never confused with an official championship certificate. Practice rounds, failed attempts and teachers' own test plays never earn one.
+
+### 🔥 Daily streaks & badges (solo play)
+
+Streak, XP and badges are derived on the client from real history with the same `lib/gamification.ts` code used for competitions. A day counts when the student finishes **either** a match **or** a quiz/practice round (IST days), so both keep the flame alive. Eight solo badges: First Solo, Quiz Passer, Scholar, Flawless, Practice Pro, Century, Week Warrior, Unstoppable. The result screen shows "streak extended" and newly unlocked badges right after finishing; the dashboard and *My attempts* show the full set.
+
+| Extra endpoint | Who |
+|----------------|-----|
+| `POST/GET /api/classes`, `/api/classes/mine`, `GET/PATCH/DELETE /api/classes/:id`, `POST /api/classes/:id/{members,regenerate-code,assignments}`, `DELETE /api/classes/:id/members/:userId` | teacher (own), admin, superAdmin (all) |
+| `POST /api/classes/join`, `GET /api/classes/joined`, `POST /api/classes/:id/leave`, `GET /api/assignments/mine` | students |
+| `GET /api/assignments/:id/progress`, `PATCH/DELETE /api/assignments/:id`, `POST /api/assignments/:id/remind` | owner / admin |
+| `GET /api/solo/activity` | any logged-in user (own attempts only) |
+
+Solo play uses its own limiter (400 requests / 15 min **per student**) because a whole classroom often shares one school Wi-Fi IP.
+
+---
+
 ## 🔒 Security & Privacy Implementation
 
 - **Digital Personal Data Protection (DPDP) Act Compliance**: Under-18 students strictly require verifiable parental consent (guardian name, guardian phone/email, and consent confirmation timestamp). Minors' contact details are permanently masked from public searches, rosters, and certificate verification endpoints.

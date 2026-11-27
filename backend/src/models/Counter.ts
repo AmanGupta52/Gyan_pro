@@ -35,12 +35,16 @@ export async function getNextSequence(name: string): Promise<number> {
 }
 
 /**
- * Format certificate identifier: GYAN26-YYYY-NNNNNN
- * e.g. GYAN26-2026-000001
+ * Format certificate identifier: <PREFIX>-YYYY-NNNNNN
+ *  - competitions: GYAN26-2026-000001   (counter key unchanged: certificate_2026)
+ *  - quizzes:      GYAN26Q-2026-000001  (own counter, so the two sequences never mix)
  */
-export async function generateCertificateId(year = new Date().getFullYear()): Promise<string> {
-  const counterKey = `certificate_${year}`;
+export async function generateCertificateId(
+  year = new Date().getFullYear(),
+  prefix = 'GYAN26'
+): Promise<string> {
+  const counterKey = prefix === 'GYAN26' ? `certificate_${year}` : `certificate_${prefix}_${year}`;
   const seq = await getNextSequence(counterKey);
   const paddedSeq = seq.toString().padStart(6, '0');
-  return `GYAN26-${year}-${paddedSeq}`;
+  return `${prefix}-${year}-${paddedSeq}`;
 }

@@ -9,6 +9,7 @@ export type NotificationType =
   | 'competition'
   | 'result'
   | 'certificate'
+  | 'assignment'
   | 'announcement';
 
 export interface INotification extends Document {
@@ -52,6 +53,7 @@ const notificationSchema = new Schema<INotification>(
         'competition',
         'result',
         'certificate',
+        'assignment',
         'announcement',
       ],
       default: 'announcement',

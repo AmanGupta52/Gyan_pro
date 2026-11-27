@@ -36,8 +36,9 @@ export function LoginForm({ onForgotPasswordClick }: LoginFormProps) {
       setGenericError(null);
       await login(data.identifier, data.password);
       toast.success('Welcome back to GYAN-26!');
-      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
+      // With no saved destination, AuthPage sends each role to its own home
+      const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
+      if (from) navigate(from, { replace: true });
     } catch (err: unknown) {
       // Credential failures stay strictly generic; other failures (rate limit, network,
       // deactivated account) get their real, human-readable message.

@@ -12,6 +12,10 @@ import gameRoutes from './game.routes.js';
 import resultRoutes from './result.routes.js';
 import certificateRoutes from './certificate.routes.js';
 import donationRoutes from './donation.routes.js';
+import quizRoutes from './quiz.routes.js';
+import soloRoutes from './solo.routes.js';
+import classRoutes from './class.routes.js';
+import assignmentRoutes from './assignment.routes.js';
 
 const router = Router();
 
@@ -41,5 +45,9 @@ router.use('/game', gameRoutes);
 router.use('/results', resultRoutes);
 router.use('/certificates', certificateRoutes);
 router.use('/donations', donationRoutes);
+router.use('/quizzes', quizRoutes);
+router.use('/solo', soloRoutes);
+router.use('/classes', classRoutes);
+router.use('/assignments', assignmentRoutes);
 
 export default router;

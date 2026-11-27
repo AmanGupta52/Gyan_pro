@@ -9,6 +9,7 @@ import { GameSession } from '../models/GameSession.js';
 import { PlayerAnswer } from '../models/PlayerAnswer.js';
 import { TeamMember } from '../models/TeamMember.js';
 import { AppError } from '../utils/AppError.js';
+import { isModerator } from '../utils/roles.js';
 
 const createSessionSchema = z.object({
   competitionId: z.string().min(1, 'Competition ID is required'),
@@ -80,7 +81,7 @@ export async function getSessionResultsHandler(
       userId: req.user!.userId,
     });
 
-    if (!membership && req.user!.role === 'player') {
+    if (!membership && !isModerator(req.user!.role)) {
       throw AppError.forbidden('You are not authorized to view results for this team.');
     }
 

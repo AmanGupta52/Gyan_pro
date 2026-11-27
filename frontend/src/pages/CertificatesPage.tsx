@@ -83,9 +83,9 @@ export function CertificatesPage() {
         <EmptyState
           icon={Award}
           title="No Certificates Issued Yet"
-          description="Participate in official GYAN-26 competitions. Once a tournament is completed, your verified certificate will appear here."
-          actionLabel="View Live Tournaments"
-          onAction={() => navigate('/competitions')}
+          description="Pass a quiz that awards a certificate, or take part in an official GYAN-26 competition. Your verified certificates appear here."
+          actionLabel="Browse quizzes"
+          onAction={() => navigate('/quizzes')}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -108,7 +108,7 @@ export function CertificatesPage() {
                         GYAN-26 Official
                       </p>
                       <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
-                        Certificate of Merit
+                        {cert.kind === 'quiz' ? 'Certificate of Achievement' : 'Certificate of Merit'}
                       </p>
                     </div>
                   </div>
@@ -131,10 +131,21 @@ export function CertificatesPage() {
                   <h3 className="text-lg font-bold font-display text-slate-900 dark:text-white leading-snug">
                     {cert.competition.name}
                   </h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">
-                    Category: <strong>{cert.competition.category}</strong> • Squad:{' '}
-                    <strong>{cert.team.name}</strong>
-                  </p>
+                  {cert.kind === 'quiz' ? (
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                      Quiz • <strong>{cert.competition.category}</strong>
+                      {cert.issuerName && (
+                        <>
+                          {' '}• Issued by <strong>{cert.issuerName}</strong>
+                        </>
+                      )}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                      Category: <strong>{cert.competition.category}</strong> • Squad:{' '}
+                      <strong>{cert.team.name}</strong>
+                    </p>
+                  )}
                   <p className="text-[11px] font-mono text-slate-600 dark:text-slate-400 mt-1">
                     ID: {cert.certificateId}
                   </p>
@@ -143,15 +154,17 @@ export function CertificatesPage() {
                 {/* Performance Pill Grid */}
                 <div className="grid grid-cols-3 gap-2.5 p-3 rounded-2xl bg-white/70 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 text-center">
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-slate-600 dark:text-slate-400">Rank</span>
+                    <span className="text-[9px] uppercase font-bold text-slate-600 dark:text-slate-400">
+                      {cert.kind === 'quiz' ? 'Result' : 'Rank'}
+                    </span>
                     <p className="text-base font-black font-display text-amber-600 dark:text-amber-400">
-                      #{cert.rank}
+                      {cert.kind === 'quiz' ? 'Passed' : `#${cert.rank}`}
                     </p>
                   </div>
                   <div>
                     <span className="text-[9px] uppercase font-bold text-slate-600 dark:text-slate-400">Score</span>
                     <p className="text-base font-black font-display text-brand-blue">
-                      {cert.score}
+                      {cert.kind === 'quiz' && cert.maxScore ? `${cert.score}/${cert.maxScore}` : cert.score}
                     </p>
                   </div>
                   <div>

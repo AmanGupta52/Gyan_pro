@@ -145,7 +145,7 @@ export function VerifyCertificatePage() {
             <div className="space-y-4">
               <div>
                 <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400 tracking-wider">
-                  Candidate Awarded
+                  {cert.kind === 'quiz' ? 'Awarded to' : 'Candidate Awarded'}
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-black font-display text-slate-900 dark:text-white mt-0.5">
                   {cert.recipientName}
@@ -154,7 +154,9 @@ export function VerifyCertificatePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800 text-xs">
                 <div>
-                  <span className="text-slate-600 dark:text-slate-400 font-medium">Championship</span>
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">
+                    {cert.kind === 'quiz' ? 'Quiz passed' : 'Championship'}
+                  </span>
                   <p className="font-bold text-slate-900 dark:text-white mt-0.5">
                     {cert.competitionName}
                   </p>
@@ -162,10 +164,15 @@ export function VerifyCertificatePage() {
                 </div>
 
                 <div>
-                  <span className="text-slate-600 dark:text-slate-400 font-medium">Squad Representation</span>
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">
+                    {cert.kind === 'quiz' ? 'Issued by' : 'Squad Representation'}
+                  </span>
                   <p className="font-bold text-slate-900 dark:text-white mt-0.5">
-                    {cert.teamName}
+                    {cert.kind === 'quiz' ? cert.issuerName || 'Quiz creator' : cert.teamName}
                   </p>
+                  {cert.kind === 'quiz' && cert.passPercent !== undefined && (
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400">Pass mark {cert.passPercent}%</p>
+                  )}
                 </div>
               </div>
 
@@ -173,10 +180,10 @@ export function VerifyCertificatePage() {
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60">
                   <p className="text-[10px] font-bold uppercase text-amber-700 dark:text-amber-300">
-                    Rank
+                    {cert.kind === 'quiz' ? 'Result' : 'Rank'}
                   </p>
                   <p className="text-xl font-black font-display text-amber-600 dark:text-amber-400 mt-0.5">
-                    #{cert.rank}
+                    {cert.kind === 'quiz' ? 'Passed' : `#${cert.rank}`}
                   </p>
                 </div>
 
@@ -185,7 +192,7 @@ export function VerifyCertificatePage() {
                     Score
                   </p>
                   <p className="text-xl font-black font-display text-brand-blue mt-0.5">
-                    {cert.score}
+                    {cert.kind === 'quiz' && cert.maxScore ? `${cert.score}/${cert.maxScore}` : cert.score}
                   </p>
                 </div>
 

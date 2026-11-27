@@ -8,8 +8,10 @@ import {
   CalendarClock,
   ClipboardList,
   Crown,
+  Dumbbell,
   Flame,
   Gamepad2,
+  GraduationCap,
   Heart,
   Lock,
   Medal,
@@ -29,13 +31,10 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { cn } from '@/lib/utils';
-import {
-  XP_PER_LEVEL,
-  computeAchievements,
-  computeProgress,
-  computeStreak,
-} from '@/lib/gamification';
-import type { Competition, UserMatchHistoryItem } from '@/types';
+import { XP_PER_LEVEL, computeAchievements } from '@/lib/gamification';
+import { soloBadgeIcons, useDailyProgress } from '@/components/quiz/SoloProgress';
+import { dueLabel } from '@/lib/quiz';
+import type { Competition, MyAssignment } from '@/types';
 
 interface SquadSummary {
   _id: string;
@@ -88,10 +87,11 @@ export function DashboardPage() {
   const { user } = useAuth();
   const now = useNow();
 
-  const historyQ = useQuery({
-    queryKey: ['dashboard', 'history'],
-    queryFn: async () =>
-      ((await api.get('/results/history', { params: { limit: 50 } })).data.data ?? []) as UserMatchHistoryItem[],
+  // Match history + solo quiz/practice activity, combined into one streak, XP and badge set
+  const daily = useDailyProgress();
+  const assignmentsQ = useQuery({
+    queryKey: ['assignments-mine'],
+    queryFn: async () => ((await api.get('/assignments/mine')).data.data ?? []) as MyAssignment[],
   });
   const teamsQ = useQuery({
     queryKey: ['dashboard', 'teams'],
@@ -102,16 +102,21 @@ export function DashboardPage() {
     queryFn: async () => ((await api.get('/competitions')).data.data ?? []) as Competition[],
   });
 
-  const history = historyQ.data ?? [];
+  const history = daily.matches;
   const teams = teamsQ.data ?? [];
 
-  const streak = useMemo(() => computeStreak(history), [history]);
-  const progress = useMemo(() => computeProgress(history), [history]);
+  const streak = daily.streak;
+  const progress = daily.progress;
+  const soloBadges = daily.badges;
   const achievements = useMemo(
     () => computeAchievements(history, streak, teams.length),
     [history, streak, teams.length]
   );
-  const unlockedCount = achievements.filter((a) => a.unlocked).length;
+  const unlockedCount =
+    achievements.filter((a) => a.unlocked).length + soloBadges.filter((b) => b.unlocked).length;
+  const totalBadges = achievements.length + soloBadges.length;
+  const todo = (assignmentsQ.data ?? []).filter((a) => a.status !== 'submitted' && a.status !== 'submitted_late');
+  const nextDue = [...todo].sort((a, b) => new Date(a.dueAt).getTime() - new Date(b.dueAt).getTime())[0];
   const avgAccuracy = history.length
     ? Math.round((history.reduce((s, h) => s + h.accuracy, 0) / history.length) * 100)
     : null;
@@ -182,13 +187,17 @@ export function DashboardPage() {
             <Flame className={cn('h-9 w-9', streak > 0 ? 'animate-flame text-orange-500' : 'text-slate-400')} aria-hidden />
           </span>
           <div>
-            {historyQ.isLoading ? <Skeleton width={80} height={32} /> : (
+            {daily.isLoading ? <Skeleton width={80} height={32} /> : (
               <p className="font-display text-3xl font-extrabold text-slate-900 dark:text-white">
                 {streak} <span className="text-base font-bold">day{streak === 1 ? '' : 's'}</span>
               </p>
             )}
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              {streak > 0 ? 'Match streak — keep it burning!' : 'Play a match to start your streak.'}
+              {streak > 0
+                ? daily.today
+                  ? 'Daily streak — played today, nice!'
+                  : 'Daily streak — play today to keep it burning!'
+                : 'Play a match or finish a quiz to start your streak.'}
             </p>
           </div>
         </Card>
@@ -201,7 +210,7 @@ export function DashboardPage() {
               </span>
               <div>
                 <p className="font-display font-bold text-slate-900 dark:text-white">Level {progress.level}</p>
-                <p className="text-xs text-slate-600 dark:text-slate-300">{progress.xp} XP earned (total match points)</p>
+                <p className="text-xs text-slate-600 dark:text-slate-300">{progress.xp} XP earned (match + quiz points)</p>
               </div>
             </div>
             <Badge variant="info">{progress.xpIntoLevel}/{XP_PER_LEVEL} XP</Badge>
@@ -223,7 +232,7 @@ export function DashboardPage() {
             {[
               { label: 'Matches', value: history.length },
               { label: 'Avg accuracy', value: avgAccuracy === null ? '—' : `${avgAccuracy}%` },
-              { label: 'Badges', value: `${unlockedCount}/${achievements.length}` },
+              { label: 'Badges', value: `${unlockedCount}/${totalBadges}` },
             ].map((s) => (
               <div key={s.label} className="rounded-2xl bg-slate-900/5 py-2 dark:bg-white/5">
                 <p className="font-display text-xl font-extrabold text-slate-900 dark:text-white">{s.value}</p>
@@ -316,7 +325,81 @@ export function DashboardPage() {
               </li>
             );
           })}
+          {soloBadges.map((b) => {
+            const Icon = soloBadgeIcons[b.id] ?? Star;
+            return (
+              <li
+                key={b.id}
+                title={b.hint}
+                className={cn(
+                  'glass flex flex-col items-center gap-2 rounded-3xl p-3 text-center',
+                  b.unlocked ? 'animate-pop' : 'opacity-70'
+                )}
+              >
+                <span className={cn('grid h-12 w-12 place-items-center rounded-2xl', b.unlocked ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-navy-900 shadow-md' : 'bg-slate-900/10 text-slate-500 dark:bg-white/10 dark:text-slate-400')}>
+                  {b.unlocked ? <Icon className="h-6 w-6" aria-hidden /> : <Lock className="h-5 w-5" aria-hidden />}
+                </span>
+                <span className="text-xs font-bold text-slate-900 dark:text-white">{b.title}</span>
+                <span className="text-[11px] leading-tight text-slate-600 dark:text-slate-300">{b.unlocked ? 'Unlocked' : b.hint}</span>
+              </li>
+            );
+          })}
         </ul>
+      </section>
+
+      {/* ── Play on your own ───────────────────────────── */}
+      <section aria-labelledby="solo-title" className="space-y-3">
+        <h2 id="solo-title" className="font-display text-xl font-extrabold text-slate-900 dark:text-white">Play on your own</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          {todo.length > 0 && nextDue && (
+            <Link to="/quizzes?tab=assigned" className="glass group flex items-center gap-4 rounded-3xl p-5 outline-none transition-all hover:-translate-y-1 hover:shadow-lifted focus-visible:ring-2 focus-visible:ring-electric-500 md:col-span-2">
+              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-rose-500/15 text-rose-600 dark:text-rose-300">
+                <ClipboardList className="h-7 w-7" aria-hidden />
+              </span>
+              <div className="min-w-0">
+                <h3 className="font-display text-base font-bold text-slate-900 dark:text-white">
+                  {todo.length} quiz{todo.length === 1 ? '' : 'zes'} assigned to you
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300">
+                  Next: <strong>{nextDue.quizTitle}</strong> · {dueLabel(nextDue.dueAt).text.toLowerCase()}
+                </p>
+              </div>
+              <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-rose-600 transition-transform group-hover:translate-x-1" aria-hidden />
+            </Link>
+          )}
+          <Link to="/quizzes" className="glass group flex items-center gap-4 rounded-3xl p-5 outline-none transition-all hover:-translate-y-1 hover:shadow-lifted focus-visible:ring-2 focus-visible:ring-electric-500">
+            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-electric-500/15 text-electric-600 dark:text-sky-200">
+              <ClipboardList className="h-7 w-7" aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <h3 className="font-display text-base font-bold text-slate-900 dark:text-white">Teacher quizzes</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300">Browse quizzes or join your class with a code.</p>
+            </div>
+            <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-electric-600 transition-transform group-hover:translate-x-1 dark:text-sky-200" aria-hidden />
+          </Link>
+          <Link to="/practice" className="glass group flex items-center gap-4 rounded-3xl p-5 outline-none transition-all hover:-translate-y-1 hover:shadow-lifted focus-visible:ring-2 focus-visible:ring-electric-500">
+            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
+              <Dumbbell className="h-7 w-7" aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <h3 className="font-display text-base font-bold text-slate-900 dark:text-white">Practice mode</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300">Random questions for your level. No team, no waiting.</p>
+            </div>
+            <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-emerald-600 transition-transform group-hover:translate-x-1" aria-hidden />
+          </Link>
+          {user && ['teacher', 'admin', 'superAdmin'].includes(user.role) && (
+            <Link to="/studio" className="glass group flex items-center gap-4 rounded-3xl p-5 outline-none transition-all hover:-translate-y-1 hover:shadow-lifted focus-visible:ring-2 focus-visible:ring-electric-500 md:col-span-2">
+              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-amber-400/20 text-amber-700 dark:text-amber-300">
+                <GraduationCap className="h-7 w-7" aria-hidden />
+              </span>
+              <div className="min-w-0">
+                <h3 className="font-display text-base font-bold text-slate-900 dark:text-white">Quiz Studio</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300">Create quizzes for your students and see how they do.</p>
+              </div>
+              <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-amber-600 transition-transform group-hover:translate-x-1" aria-hidden />
+            </Link>
+          )}
+        </div>
       </section>
 
       {/* ── 8 numbered modules ─────────────────────────── */}

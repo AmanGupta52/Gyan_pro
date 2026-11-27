@@ -7,6 +7,8 @@ import {
   Users,
   ShieldCheck,
   FileText,
+  GraduationCap,
+  ClipboardList,
   ArrowLeft,
   Menu,
   X,
@@ -14,18 +16,57 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/Badge';
 
-export function AdminLayout() {
+interface NavItem {
+  label: string;
+  path: string;
+  icon: typeof LayoutDashboard;
+  /** Custom "is this the active page" check; defaults to prefix match */
+  match?: (pathname: string) => boolean;
+}
+
+/**
+ * One layout, two workspaces:
+ *  - mode="admin":  /admin/*   (admin + superAdmin) competitions, users, audit
+ *  - mode="studio": /studio/*  (teacher + admin + superAdmin) quizzes & questions
+ */
+export function AdminLayout({ mode = 'admin' }: { mode?: 'admin' | 'studio' }) {
   const { user } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navItems = [
-    { label: 'Overview', path: '/admin', icon: LayoutDashboard },
+  const isSuperAdmin = user?.role === 'superAdmin';
+  const isModerator = user?.role === 'admin' || isSuperAdmin;
+
+  const adminItems: NavItem[] = [
+    { label: 'Overview', path: '/admin', icon: LayoutDashboard, match: (p) => p === '/admin' },
     { label: 'Competitions', path: '/admin/competitions', icon: Trophy },
     { label: 'Question Bank', path: '/admin/questions', icon: HelpCircle },
+    { label: 'Quizzes', path: '/studio', icon: ClipboardList, match: () => false },
+    ...(isSuperAdmin ? [{ label: 'Teachers', path: '/admin/teachers', icon: GraduationCap }] : []),
     { label: 'Users & Roles', path: '/admin/users', icon: Users },
     { label: 'Audit Trail', path: '/admin/audit-logs', icon: FileText },
   ];
+
+  const studioItems: NavItem[] = [
+    {
+      label: isModerator ? 'All Quizzes' : 'My Quizzes',
+      path: '/studio',
+      icon: ClipboardList,
+      match: (p) => p === '/studio' || p.startsWith('/studio/quizzes'),
+    },
+    {
+      label: 'Classes',
+      path: '/studio/classes',
+      icon: GraduationCap,
+      match: (p) => p.startsWith('/studio/classes') || p.startsWith('/studio/assignments'),
+    },
+    { label: 'Question Bank', path: '/studio/questions', icon: HelpCircle },
+    ...(isModerator ? [{ label: 'Admin Panel', path: '/admin', icon: ShieldCheck, match: () => false }] : []),
+  ];
+
+  const navItems = mode === 'admin' ? adminItems : studioItems;
+  const roleLabel = mode === 'admin' ? 'Admin' : user?.role === 'teacher' ? 'Teacher' : 'Studio';
+  const subtitle = mode === 'admin' ? 'Control Center' : 'Quiz Studio';
 
   return (
     <div className="app-bg flex">
@@ -43,10 +84,10 @@ export function AdminLayout() {
                   GYAN-26
                 </span>
                 <Badge variant="warning" size="sm">
-                  Admin
+                  {roleLabel}
                 </Badge>
               </div>
-              <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">Control Center</p>
+              <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">{subtitle}</p>
             </div>
           </div>
 
@@ -54,10 +95,9 @@ export function AdminLayout() {
           <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive =
-                item.path === '/admin'
-                  ? location.pathname === '/admin'
-                  : location.pathname.startsWith(item.path);
+              const isActive = item.match
+                ? item.match(location.pathname)
+                : location.pathname.startsWith(item.path);
 
               return (
                 <Link
@@ -114,7 +154,7 @@ export function AdminLayout() {
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <span className="font-bold font-display text-slate-900 dark:text-white">
-              GYAN-26 Admin
+              GYAN-26 {roleLabel}
             </span>
           </div>
 

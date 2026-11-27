@@ -1,7 +1,7 @@
 import type { Document, Types } from 'mongoose';
 
 // ─── User Roles ───────────────────────────────────────────────
-export type UserRole = 'player' | 'admin' | 'superAdmin';
+export type UserRole = 'player' | 'teacher' | 'admin' | 'superAdmin';
 
 // ─── User Interface ───────────────────────────────────────────
 export interface IUser extends Document {
@@ -11,8 +11,9 @@ export interface IUser extends Document {
   phone?: string;
   password: string;
   role: UserRole;
-  dateOfBirth: Date;
-  educationLevel: string;
+  /** Required for players only; staff accounts (teacher/admin) may omit it */
+  dateOfBirth?: Date;
+  educationLevel?: string;
   institution?: string;
   city?: string;
   state?: string;
@@ -29,6 +30,8 @@ export interface IUser extends Document {
   guardianEmail?: string;
   guardianConsentAt?: Date;
   isActive: boolean;
+  /** Who created this account (set when a superAdmin adds a teacher) */
+  createdBy?: Types.ObjectId;
   lastLoginAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -47,8 +50,8 @@ export interface PublicUser {
   email: string;
   phone?: string;
   role: UserRole;
-  dateOfBirth: string;
-  educationLevel: string;
+  dateOfBirth?: string;
+  educationLevel?: string;
   institution?: string;
   city?: string;
   state?: string;

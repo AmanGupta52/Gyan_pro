@@ -31,18 +31,30 @@ const userSchema = new Schema<IUser>(
     role: {
       type: String,
       enum: {
-        values: ['player', 'admin', 'superAdmin'] as const,
+        values: ['player', 'teacher', 'admin', 'superAdmin'] as const,
         message: '{VALUE} is not a valid role',
       },
       default: 'player',
     },
+    // Players must provide these (DPDP minor checks, grade-based competitions).
+    // Staff accounts (teacher/admin/superAdmin) are created by a superAdmin and don't need them.
     dateOfBirth: {
       type: Date,
-      required: [true, 'Date of birth is required'],
+      required: [
+        function (this: IUser) {
+          return this.role === 'player';
+        },
+        'Date of birth is required',
+      ],
     },
     educationLevel: {
       type: String,
-      required: [true, 'Education level is required'],
+      required: [
+        function (this: IUser) {
+          return this.role === 'player';
+        },
+        'Education level is required',
+      ],
     },
     institution: { type: String },
     city: { type: String },
@@ -70,6 +82,7 @@ const userSchema = new Schema<IUser>(
 
     // Status
     isActive: { type: Boolean, default: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     lastLoginAt: { type: Date },
   },
   {
@@ -106,7 +119,7 @@ userSchema.methods.toPublicJSON = function (this: IUser): PublicUser {
     email: this.email,
     phone: this.phone,
     role: this.role,
-    dateOfBirth: this.dateOfBirth.toISOString(),
+    dateOfBirth: this.dateOfBirth?.toISOString(),
     educationLevel: this.educationLevel,
     institution: this.institution,
     city: this.city,

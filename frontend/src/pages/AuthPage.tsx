@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/Button';
 import api from '@/config/api';
 
 export function AuthPage() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('login');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
@@ -22,9 +22,10 @@ export function AuthPage() {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      navigate('/dashboard', { replace: true });
+      // Teachers live in the Quiz Studio; everyone else starts on the student dashboard
+      navigate(user?.role === 'teacher' ? '/studio' : '/dashboard', { replace: true });
     }
-  }, [isAuthenticated, isLoading, navigate]);
+  }, [isAuthenticated, isLoading, user?.role, navigate]);
 
   const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

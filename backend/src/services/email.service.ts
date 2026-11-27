@@ -147,3 +147,19 @@ export async function sendPasswordResetEmail(user: IUser, token: string): Promis
   );
   await sendEmail({ to: user.email, toName: user.name, subject: 'Password reset — GYAN-26', html });
 }
+
+/** Invite a newly added teacher to set their password (reuses the password-reset page). */
+export async function sendTeacherInviteEmail(user: IUser, token: string, invitedBy: string): Promise<void> {
+  const setupUrl = `${env.FRONTEND_URL}/reset-password?token=${encodeURIComponent(token)}`;
+  const html = layout(
+    'Welcome to GYAN-26',
+    `<p style="color: #475569;">Hi <strong>${esc(user.name)}</strong>,</p>
+     <p style="color: #475569;"><strong>${esc(invitedBy)}</strong> added you as a <strong>Teacher</strong> on GYAN-26. You can create quizzes for students and see how they perform.</p>
+     <p style="color: #475569;">Set your password to get started.</p>`,
+    'Set My Password',
+    setupUrl,
+    '#2563eb',
+    'This link expires in 48 hours and can be used once. After setting your password, log in with this email address.'
+  );
+  await sendEmail({ to: user.email, toName: user.name, subject: 'You have been added as a teacher — GYAN-26', html });
+}

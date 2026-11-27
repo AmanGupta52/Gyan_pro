@@ -12,7 +12,6 @@ export const createQuestion = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const getQuestionBank = asyncHandler(async (req: Request, res: Response) => {
-  const isAdmin = req.user?.role === 'admin' || req.user?.role === 'superAdmin';
   const result = await questionService.getQuestionBank(
     {
       educationLevel: req.query.educationLevel as string | undefined,
@@ -21,18 +20,18 @@ export const getQuestionBank = asyncHandler(async (req: Request, res: Response) 
       type: req.query.type as string | undefined,
       status: req.query.status as string | undefined,
       search: req.query.search as string | undefined,
+      mine: req.query.mine === 'true',
       page: parseInt((req.query.page as string) || '1', 10),
-      limit: parseInt((req.query.limit as string) || '20', 10),
+      limit: Math.min(100, parseInt((req.query.limit as string) || '20', 10)),
     },
-    isAdmin
+    req.user!
   );
   res.status(200).json({ success: true, data: result.questions, meta: result.meta });
 });
 
 export const getQuestionById = asyncHandler(async (req: Request, res: Response) => {
   const id = req.params.id as string;
-  const isAdmin = req.user?.role === 'admin' || req.user?.role === 'superAdmin';
-  const question = await questionService.getQuestionById(id, isAdmin);
+  const question = await questionService.getQuestionById(id, req.user!);
   res.status(200).json({ success: true, data: question });
 });
 
@@ -40,7 +39,7 @@ export const updateQuestion = asyncHandler(async (req: Request, res: Response) =
   const id = req.params.id as string;
   const updated = await questionService.updateQuestion(
     id,
-    req.user!.userId,
+    req.user!,
     req.body,
     req.ip
   );
@@ -49,6 +48,6 @@ export const updateQuestion = asyncHandler(async (req: Request, res: Response) =
 
 export const deleteQuestion = asyncHandler(async (req: Request, res: Response) => {
   const id = req.params.id as string;
-  const result = await questionService.deleteQuestion(id, req.user!.userId, req.ip);
+  const result = await questionService.deleteQuestion(id, req.user!, req.ip);
   res.status(200).json({ success: true, data: result });
 });

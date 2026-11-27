@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Swords, Trophy, User, Users } from 'lucide-react';
+import { ClipboardList, Home, Swords, Trophy, User, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const items = [
   { to: '/dashboard', label: 'Home', Icon: Home },
   { to: '/competitions', label: 'Compete', Icon: Swords },
+  { to: '/quizzes', label: 'Quizzes', Icon: ClipboardList },
   { to: '/teams', label: 'Teams', Icon: Users },
   { to: '/leaderboard', label: 'Ranks', Icon: Trophy },
   { to: '/profile', label: 'Profile', Icon: User },
@@ -19,12 +20,12 @@ export function BottomNav() {
     >
       <ul className="glass-nav pointer-events-auto flex w-full max-w-md items-center justify-between rounded-full p-1.5">
         {items.map(({ to, label, Icon }) => (
-          <li key={to} className="flex-1">
+          <li key={to} className="min-w-0 flex-1">
             <NavLink
               to={to}
               className={({ isActive }) =>
                 cn(
-                  'flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-bold transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-electric-500/60',
+                  'flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-full text-[10.5px] font-bold transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-electric-500/60',
                   isActive
                     ? 'bg-gradient-to-b from-electric-400 to-electric-600 text-white shadow-lg'
                     : 'text-slate-600 dark:text-slate-300'

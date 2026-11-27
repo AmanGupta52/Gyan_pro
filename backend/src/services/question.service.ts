@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 import { Question, type IQuestion, type QuestionType, type QuestionDifficulty } from '../models/Question.js';
 import { CompetitionQuestion } from '../models/CompetitionQuestion.js';
+import { Quiz } from '../models/Quiz.js';
+import { User } from '../models/User.js';
+import { canManageContent, isModerator } from '../utils/roles.js';
+import type { AuthPayload } from '../types/index.js';
 import { AppError } from '../utils/AppError.js';
 import { logAudit } from './audit.service.js';
 
@@ -27,8 +31,15 @@ export interface QuestionBankFilterParams {
   type?: string;
   status?: string;
   search?: string;
+  /** Only questions created by the requesting user */
+  mine?: boolean;
   page?: number;
   limit?: number;
+}
+
+/** Ids of admins/superAdmins: their questions form the shared, curated bank. */
+export async function getSharedAuthorIds() {
+  return User.find({ role: { $in: ['admin', 'superAdmin'] } }).distinct('_id');
 }
 
 export async function createQuestion(adminId: string, data: CreateQuestionInput, ipAddress?: string) {
@@ -67,11 +78,14 @@ export async function createQuestion(adminId: string, data: CreateQuestionInput,
   return question;
 }
 
-export async function getQuestionBank(
-  params: QuestionBankFilterParams,
-  isAdmin = false
-) {
-  const { educationLevel, subjectId, difficulty, type, status, search, page = 1, limit = 20 } = params;
+/**
+ * Question bank listing for STAFF (teacher / admin / superAdmin).
+ * - admin/superAdmin: whole bank
+ * - teacher: own questions + the shared bank written by admins
+ * Players never use this; they only receive questions through a running game/attempt.
+ */
+export async function getQuestionBank(params: QuestionBankFilterParams, actor: AuthPayload) {
+  const { educationLevel, subjectId, difficulty, type, status, search, mine, page = 1, limit = 20 } = params;
 
   const filter: Record<string, unknown> = {};
 
@@ -91,15 +105,21 @@ export async function getQuestionBank(
     filter.status = status;
   }
   if (search && search.trim()) {
-    filter.text = { $regex: new RegExp(search.trim(), 'i') };
+    filter.text = { $regex: new RegExp(escapeRegex(search.trim()), 'i') };
+  }
+
+  if (mine) {
+    filter.createdBy = actor.userId;
+  } else if (!isModerator(actor.role)) {
+    const sharedIds = await getSharedAuthorIds();
+    filter.$or = [{ createdBy: actor.userId }, { createdBy: { $in: sharedIds } }];
   }
 
   const skip = (page - 1) * limit;
-  const projection = isAdmin ? '+correctAnswers +explanation' : '';
 
   const [questions, total] = await Promise.all([
     Question.find(filter)
-      .select(projection)
+      .select('+correctAnswers +explanation')
       .populate('subjectId', 'name code')
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -119,11 +139,13 @@ export async function getQuestionBank(
   };
 }
 
-export async function getQuestionById(questionId: string, isAdmin = false) {
-  const projection = isAdmin ? '+correctAnswers +explanation' : '';
+function escapeRegex(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
+export async function getQuestionById(questionId: string, actor: AuthPayload) {
   const question = await Question.findById(questionId)
-    .select(projection)
+    .select('+correctAnswers +explanation')
     .populate('subjectId', 'name code')
     .lean();
 
@@ -131,18 +153,29 @@ export async function getQuestionById(questionId: string, isAdmin = false) {
     throw AppError.notFound('Question not found');
   }
 
+  if (!isModerator(actor.role) && question.createdBy.toString() !== actor.userId) {
+    const sharedIds = (await getSharedAuthorIds()).map((id) => id.toString());
+    if (!sharedIds.includes(question.createdBy.toString())) {
+      throw AppError.forbidden('You do not have access to this question.');
+    }
+  }
+
   return question;
 }
 
 export async function updateQuestion(
   questionId: string,
-  adminId: string,
+  actor: AuthPayload,
   updates: Partial<CreateQuestionInput>,
   ipAddress?: string
 ) {
+  const adminId = actor.userId;
   const question = await Question.findById(questionId).select('+correctAnswers +explanation');
   if (!question) {
     throw AppError.notFound('Question not found');
+  }
+  if (!canManageContent(actor, question.createdBy.toString())) {
+    throw AppError.forbidden('You can only edit questions you created.');
   }
 
   if (updates.options) {
@@ -177,11 +210,26 @@ export async function updateQuestion(
   return Question.findById(questionId).select('+correctAnswers +explanation').lean();
 }
 
-export async function deleteQuestion(questionId: string, adminId: string, ipAddress?: string) {
+export async function deleteQuestion(questionId: string, actor: AuthPayload, ipAddress?: string) {
+  const adminId = actor.userId;
+  const existing = await Question.findById(questionId).select('createdBy');
+  if (!existing) {
+    throw AppError.notFound('Question not found');
+  }
+  if (!canManageContent(actor, existing.createdBy.toString())) {
+    throw AppError.forbidden('You can only delete questions you created.');
+  }
+
   const isUsed = await CompetitionQuestion.findOne({ questionId });
   if (isUsed) {
     throw AppError.badRequest(
       'Cannot delete question because it is attached to an existing competition.'
+    );
+  }
+  const usedInQuiz = await Quiz.exists({ questionIds: questionId });
+  if (usedInQuiz) {
+    throw AppError.badRequest(
+      'Cannot delete question because it is used in a quiz. Remove it from the quiz first.'
     );
   }
 

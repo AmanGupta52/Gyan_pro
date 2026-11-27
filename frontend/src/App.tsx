@@ -29,6 +29,18 @@ import { AdminCompetitionsPage } from '@/pages/admin/AdminCompetitionsPage';
 import { AdminQuestionsPage } from '@/pages/admin/AdminQuestionsPage';
 import { AdminUsersPage } from '@/pages/admin/AdminUsersPage';
 import { AdminAuditLogPage } from '@/pages/admin/AdminAuditLogPage';
+import { AdminTeachersPage } from '@/pages/admin/AdminTeachersPage';
+import { QuizzesPage } from '@/pages/QuizzesPage';
+import { QuizDetailPage } from '@/pages/QuizDetailPage';
+import { PracticeSetupPage } from '@/pages/PracticeSetupPage';
+import { SoloPlayPage } from '@/pages/SoloPlayPage';
+import { SoloResultPage } from '@/pages/SoloResultPage';
+import { StudioQuizzesPage } from '@/pages/studio/StudioQuizzesPage';
+import { QuizEditorPage } from '@/pages/studio/QuizEditorPage';
+import { QuizResultsPage } from '@/pages/studio/QuizResultsPage';
+import { StudioClassesPage } from '@/pages/studio/StudioClassesPage';
+import { ClassDetailPage } from '@/pages/studio/ClassDetailPage';
+import { AssignmentProgressPage } from '@/pages/studio/AssignmentProgressPage';
 import { NativeAppManager } from '@/components/native/NativeAppManager';
 
 const queryClient = new QueryClient({
@@ -82,6 +94,28 @@ export function App() {
                 <Route path="/donate" element={<Navigate to="/support" replace />} />
 
                 <Route path="/instructions" element={<InstructionsPage />} />
+
+                {/* Solo play: quizzes + practice (every role) */}
+                <Route path="/quizzes" element={<QuizzesPage />} />
+                <Route path="/quizzes/join/:code" element={<QuizDetailPage />} />
+                <Route path="/quizzes/:id" element={<QuizDetailPage />} />
+                <Route path="/practice" element={<PracticeSetupPage />} />
+                <Route path="/solo/:attemptId" element={<SoloPlayPage />} />
+                <Route path="/solo/:attemptId/result" element={<SoloResultPage />} />
+              </Route>
+            </Route>
+
+            {/* Quiz Studio: teachers, admins and superAdmins create quizzes & questions */}
+            <Route element={<ProtectedRoute allowedRoles={['teacher', 'admin', 'superAdmin']} />}>
+              <Route path="/studio" element={<AdminLayout mode="studio" />}>
+                <Route index element={<StudioQuizzesPage />} />
+                <Route path="quizzes/new" element={<QuizEditorPage />} />
+                <Route path="quizzes/:id" element={<QuizEditorPage />} />
+                <Route path="quizzes/:id/results" element={<QuizResultsPage />} />
+                <Route path="classes" element={<StudioClassesPage />} />
+                <Route path="classes/:id" element={<ClassDetailPage />} />
+                <Route path="assignments/:id" element={<AssignmentProgressPage />} />
+                <Route path="questions" element={<AdminQuestionsPage />} />
               </Route>
             </Route>
 
@@ -93,6 +127,13 @@ export function App() {
                 <Route path="questions" element={<AdminQuestionsPage />} />
                 <Route path="users" element={<AdminUsersPage />} />
                 <Route path="audit-logs" element={<AdminAuditLogPage />} />
+              </Route>
+            </Route>
+
+            {/* Only a superAdmin can add teachers */}
+            <Route element={<ProtectedRoute allowedRoles={['superAdmin']} />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route path="teachers" element={<AdminTeachersPage />} />
               </Route>
             </Route>
 

@@ -101,3 +101,18 @@ export const getAuditLogs = asyncHandler(async (req: Request, res: Response) => 
   const result = await auditService.getAuditLogs(page, limit, entityType);
   res.status(200).json({ success: true, data: result.logs, meta: result.meta });
 });
+
+export const createTeacher = asyncHandler(async (req: Request, res: Response) => {
+  const data = await adminService.createTeacher(req.user!.userId, req.body, req.ip);
+  res.status(201).json({ success: true, data });
+});
+
+export const listTeachers = asyncHandler(async (_req: Request, res: Response) => {
+  const data = await adminService.listTeachers();
+  res.status(200).json({ success: true, data });
+});
+
+export const resendTeacherInvite = asyncHandler(async (req: Request, res: Response) => {
+  const data = await adminService.resendTeacherInvite(req.user!.userId, req.params.id as string, req.ip);
+  res.status(200).json({ success: true, data });
+});

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Bell, History, LogOut, Moon, Shield, Sparkles, Sun, User as UserIcon } from 'lucide-react';
+import { Bell, GraduationCap, History, LogOut, Moon, Shield, Sparkles, Sun, User as UserIcon } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUnreadCount } from '@/hooks/useUnreadCount';
 import { Avatar } from '@/components/ui/Avatar';
@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 const links = [
   { to: '/dashboard', label: 'Home' },
   { to: '/competitions', label: 'Compete' },
+  { to: '/quizzes', label: 'Quizzes' },
   { to: '/teams', label: 'Teams' },
   { to: '/leaderboard', label: 'Leaderboard' },
   { to: '/certificates', label: 'Certificates' },
@@ -26,6 +27,7 @@ export function TopBar() {
   const unread = useUnreadCount();
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const isAdmin = user?.role === 'admin' || user?.role === 'superAdmin';
+  const isStaff = isAdmin || user?.role === 'teacher';
 
   const toggleTheme = () => {
     const next = !document.documentElement.classList.contains('dark');
@@ -114,6 +116,7 @@ export function TopBar() {
                     { to: '/profile', label: 'My Profile', Icon: UserIcon },
                     { to: '/history', label: 'Match History', Icon: History },
                     { to: '/support', label: 'Support GYAN-26', Icon: Sparkles },
+                    ...(isStaff ? [{ to: '/studio', label: 'Quiz Studio', Icon: GraduationCap }] : []),
                     ...(isAdmin ? [{ to: '/admin', label: 'Admin Panel', Icon: Shield }] : []),
                   ].map(({ to, label, Icon }) => (
                     <DropdownMenu.Item key={to} asChild>

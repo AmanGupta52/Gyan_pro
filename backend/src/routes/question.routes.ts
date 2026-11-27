@@ -9,30 +9,28 @@ import {
 
 const router = Router();
 
-// Authenticated players can fetch questions during games, but admins can manage bank
-router.use(authenticate);
+// The question bank (with correct answers) is for staff only. Players receive questions
+// exclusively through a running game or quiz attempt, never by browsing the bank.
+router.use(authenticate, authorize('teacher', 'admin', 'superAdmin'));
 
 router.get('/', questionController.getQuestionBank);
 router.get('/:id', questionController.getQuestionById);
 
-// Admin-only CRUD operations
+// Create: any staff role. Update/delete: owner or admin (enforced in the service).
 router.post(
   '/',
-  authorize('admin', 'superAdmin'),
   validate(createQuestionSchema),
   questionController.createQuestion
 );
 
 router.patch(
   '/:id',
-  authorize('admin', 'superAdmin'),
   validate(updateQuestionSchema),
   questionController.updateQuestion
 );
 
 router.delete(
   '/:id',
-  authorize('admin', 'superAdmin'),
   questionController.deleteQuestion
 );
 

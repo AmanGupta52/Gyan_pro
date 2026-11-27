@@ -11,6 +11,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { useAuth } from '@/hooks/useAuth';
 import api from '@/config/api';
 
 interface QuestionItem {
@@ -23,12 +24,23 @@ interface QuestionItem {
   timeLimit: number;
   status: string;
   correctAnswers?: string[];
+  createdBy?: string;
   options: Array<{ id: string; text: string }>;
   subjectId?: { name: string; code: string };
 }
 
+interface SubjectOption {
+  _id: string;
+  name: string;
+  code: string;
+}
+
 export function AdminQuestionsPage() {
+  const { user } = useAuth();
+  const isModerator = user?.role === 'admin' || user?.role === 'superAdmin';
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
+  const [subjects, setSubjects] = useState<SubjectOption[]>([]);
+  const [onlyMine, setOnlyMine] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Filters
@@ -47,6 +59,7 @@ export function AdminQuestionsPage() {
       difficulty: 'medium',
       educationLevel: 'Class 10',
       subjectId: '',
+      status: 'published',
       points: 100,
       timeLimit: 30,
       explanation: '',
@@ -71,6 +84,7 @@ export function AdminQuestionsPage() {
           educationLevel: filterLevel !== 'all' ? filterLevel : undefined,
           difficulty: filterDifficulty !== 'all' ? filterDifficulty : undefined,
           type: filterType !== 'all' ? filterType : undefined,
+          mine: onlyMine ? 'true' : undefined,
           limit: 50,
         },
       });
@@ -84,7 +98,15 @@ export function AdminQuestionsPage() {
 
   useEffect(() => {
     fetchQuestions();
-  }, [filterLevel, filterDifficulty, filterType]);
+  }, [filterLevel, filterDifficulty, filterType, onlyMine]);
+
+  // Subjects are required by the API; the form had no way to pick one before
+  useEffect(() => {
+    api
+      .get('/categories/subjects')
+      .then(({ data }) => setSubjects(data.data || []))
+      .catch(() => toast.error('Could not load subjects'));
+  }, []);
 
   const onCreateQuestionSubmit = async (formData: any) => {
     try {
@@ -143,7 +165,7 @@ export function AdminQuestionsPage() {
             Question Bank
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Curate quiz questions across difficulty tiers and educational categories.
+            Curate quiz questions across difficulty tiers and educational categories. Teachers see their own questions plus the shared bank.
           </p>
         </div>
 
@@ -202,6 +224,16 @@ export function AdminQuestionsPage() {
             <option value="image_question">Image Question</option>
           </Select>
         </div>
+
+        <label className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+          <input
+            type="checkbox"
+            checked={onlyMine}
+            onChange={(e) => setOnlyMine(e.target.checked)}
+            className="h-4 w-4 rounded border-slate-300"
+          />
+          Only my questions
+        </label>
       </div>
 
       <Table>
@@ -263,14 +295,19 @@ export function AdminQuestionsPage() {
                 {q.correctAnswers?.join(', ') || 'Protected'}
               </TableCell>
               <TableCell>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleDelete(q._id)}
-                  className="text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-1.5"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                {(isModerator || q.createdBy === user?._id) ? (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleDelete(q._id)}
+                    className="text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-1.5"
+                    aria-label="Delete question"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                ) : (
+                  <span className="text-[11px] text-slate-500">Shared</span>
+                )}
               </TableCell>
             </TableRow>
           )))}
@@ -291,6 +328,22 @@ export function AdminQuestionsPage() {
             required
             {...register('text', { required: true, minLength: 3 })}
           />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Select label="Subject" required {...register('subjectId', { required: true })}>
+              <option value="">Select subject…</option>
+              {subjects.map((s) => (
+                <option key={s._id} value={s._id}>
+                  {s.name}
+                </option>
+              ))}
+            </Select>
+
+            <Select label="Visibility" {...register('status')}>
+              <option value="published">Published (usable everywhere)</option>
+              <option value="draft">Draft (only in my quizzes)</option>
+            </Select>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Select label="Question Type" {...register('type')}>

@@ -49,6 +49,16 @@ vi.mock('../src/models/DonationSettings.js', () => {
   };
 });
 
+// Quiz certificates live in their own collection; verification falls back to it when a
+// competition certificate is not found. Nothing matches here, so unknown ids still give 404.
+vi.mock('../src/models/QuizCertificate.js', () => {
+  const emptyQuery: any = {
+    populate: () => emptyQuery,
+    lean: () => Promise.resolve(null),
+  };
+  return { QuizCertificate: { findOne: vi.fn().mockReturnValue(emptyQuery) } };
+});
+
 // Mock Certificate with chained .populate().populate().populate().lean()
 vi.mock('../src/models/Certificate.js', () => {
   return {

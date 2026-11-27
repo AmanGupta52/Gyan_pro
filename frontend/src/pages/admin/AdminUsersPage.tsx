@@ -19,8 +19,8 @@ interface UserRow {
   name: string;
   email: string;
   phone?: string;
-  role: 'player' | 'admin' | 'superAdmin';
-  educationLevel: string;
+  role: 'player' | 'teacher' | 'admin' | 'superAdmin';
+  educationLevel?: string;
   institution?: string;
   city?: string;
   state?: string;
@@ -40,7 +40,7 @@ export function AdminUsersPage() {
 
   // Role edit modal
   const [roleModalUser, setRoleModalUser] = useState<UserRow | null>(null);
-  const [selectedRole, setSelectedRole] = useState<'player' | 'admin' | 'superAdmin'>('player');
+  const [selectedRole, setSelectedRole] = useState<UserRow['role']>('player');
 
   const fetchUsers = async () => {
     try {
@@ -144,6 +144,7 @@ export function AdminUsersPage() {
           >
             <option value="all">All Roles</option>
             <option value="player">Player</option>
+            <option value="teacher">Teacher</option>
             <option value="admin">Admin</option>
             <option value="superAdmin">Super Admin</option>
           </Select>
@@ -198,6 +199,8 @@ export function AdminUsersPage() {
                       ? 'warning'
                       : u.role === 'admin'
                       ? 'info'
+                      : u.role === 'teacher'
+                      ? 'success'
                       : 'default'
                   }
                   size="sm"
@@ -207,9 +210,13 @@ export function AdminUsersPage() {
                 </Badge>
               </TableCell>
               <TableCell>
-                <Badge variant="info" size="sm">
-                  {u.educationLevel}
-                </Badge>
+                {u.educationLevel ? (
+                  <Badge variant="info" size="sm">
+                    {u.educationLevel}
+                  </Badge>
+                ) : (
+                  <span className="text-xs text-slate-500">—</span>
+                )}
               </TableCell>
               <TableCell>
                 <Badge
@@ -222,7 +229,7 @@ export function AdminUsersPage() {
               <TableCell>
                 <div className="flex items-center gap-1.5">
                   {/* Change Role (superAdmin only) */}
-                  {isSuperAdmin && (
+                  {isSuperAdmin && u._id !== currentUser?._id && (
                     <Button
                       size="sm"
                       variant="secondary"
@@ -273,6 +280,7 @@ export function AdminUsersPage() {
               onChange={(e) => setSelectedRole(e.target.value as any)}
             >
               <option value="player">Player (Default user)</option>
+              <option value="teacher">Teacher (Create quizzes for students)</option>
               <option value="admin">Admin (Manage competitions & questions)</option>
               <option value="superAdmin">Super Admin (Full root access)</option>
             </Select>
